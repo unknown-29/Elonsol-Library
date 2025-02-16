@@ -17,6 +17,7 @@ export default function Book() {
 
 	async function getBookData() {
 		let { data } = await axios.get(
+			// `http://localhost:5000/book/books/${allURLParams.id}`
 			`https://openlibrary.org/works/${allURLParams.id}.json`
 			// {
 			// 	headers: {

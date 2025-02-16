@@ -5,7 +5,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import BookItem from './BookItem';
 import { motion } from 'framer-motion';
 import Joi from 'joi';
-
+// @todo add pagination
 export default function Home() {
 	const [allBooks, setAllBooks] = useState([]);
 	const [bookName, setBookName] = useState('');
@@ -16,6 +16,7 @@ export default function Home() {
 		setLoading(true);
 		let { data } = await axios.get(
 			'https://openlibrary.org/trending/weekly.json?limit=50',
+			// 'http://localhost:5000/book'
 			{
 				// headers: {
 				// 	token: localStorage.getItem('userToken'),
@@ -28,15 +29,18 @@ export default function Home() {
 	}
 
 	async function searchBooksByName() {
+		setAllBooks([]);
+		setLoading(true);
 		let { data } = await axios.get(
-			`http://localhost:5000/book/searchBooks/${bookName}`,
-			{
-				headers: {
-					token: localStorage.getItem('userToken'),
-				},
-			}
+			`https://openlibrary.org/search.json?q=${bookName}`
+			// `http://localhost:5000/book/searchBooks/${bookName}`,
+			// {
+			// 	headers: {
+			// 		token: localStorage.getItem('userToken'),
+			// 	},
+			// }
 		);
-		setAllBooks(data.books);
+		setAllBooks(data.docs);
 	}
 
 	function validateSearchData() {
@@ -59,7 +63,6 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		setLoading(true);
 		getDataFromURL();
 	}, []);
 	return (
