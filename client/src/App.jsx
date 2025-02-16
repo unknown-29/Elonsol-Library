@@ -11,29 +11,31 @@ import RootLayout from './Components/RootLayout/RootLayout';
 import SignUp from './Components/SignUp/SignUp';
 import UserContextProvider from './Context/UserContext';
 
-
 let routers = createBrowserRouter([
-  {path:'/', element: <RootLayout/>, children:[
-    {index:true, element: <SignUp/>},
-    {path:"login", element: <Login/>},
-    {path:"home", element: <Home/>},
-    {path:"addBook", element: <AddBook/>},
-    {path:"Book/:id", element: <Book/>},
-    {path:"profile", element: <Profile/>},
-    {path:"nonReturnedBooks", element: <NonReturnedBooks/>},
-    {path:"issuedBooks", element: <IssuedBooks/>},
-    
-  ]}
-])
+	{
+		path: '/',
+		element: <RootLayout />,
+		children: [
+			{ index: true, element: <SignUp /> },
+			{ path: 'login', element: <Login /> },
+			{ path: 'home', element: <Home /> },
+			{ path: 'addBook', element: <AddBook /> },
+			{ path: 'Book/:id/:bookPhoto', element: <Book /> },
+			{ path: 'profile', element: <Profile /> },
+			{ path: 'nonReturnedBooks', element: <NonReturnedBooks /> },
+			{ path: 'issuedBooks', element: <IssuedBooks /> },
+		],
+	},
+]);
 
 function App() {
-  return <>
-        <UserContextProvider>
-              <RouterProvider router={routers}/>
-        </UserContextProvider>
-    
-        </>
-    ;
+	return (
+		<>
+			<UserContextProvider>
+				<RouterProvider router={routers} />
+			</UserContextProvider>
+		</>
+	);
 }
 
 export default App;
