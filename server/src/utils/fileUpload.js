@@ -1,16 +1,7 @@
-import multer from "multer";
-import {v4 as uuidv4} from 'uuid'
-
-export const fileUpload = (fieldName)=>{
-    const storage = multer.diskStorage({
-        destination: (req,res,cb)=>{
-            cb(null,'uploads/')
-        },
-        filename: (req,file,cb)=>{
-            cb(null,uuidv4()+"-"+ file.originalname)
-        }
-    })
-    
-    const upload = multer({storage})
-    return upload.single(fieldName)
-}
+import multer from 'multer';
+import { v4 as uuidv4 } from 'uuid';
+export const fileUpload = (fieldName) => {
+	console.log(fieldName);
+	const upload = multer({ storage: multer.memoryStorage() });
+	return upload.single(fieldName);
+};

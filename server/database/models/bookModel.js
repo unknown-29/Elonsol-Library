@@ -1,71 +1,75 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const bookSchema = mongoose.Schema({
-    name:
-    {
-        type:String ,
-        unique:true,
-        minLength:[3,"Name is too short"],
-        maxLength:[20 , "Name is too Long"],
-        required:true
-    },
+const bookSchema = mongoose.Schema(
+	{
+		// name: {
+		// 	type: String,
+		// 	unique: true,
+		// 	minLength: [3, 'Name is too short'],
+		// 	maxLength: [20, 'Name is too Long'],
+		// 	required: true,
+		// },
 
-    category:
-    {
-        type:String,
-        required:true,
-        minLength:[3,"Name is too short"],
-        maxLength:[20 , "Name is too Long"],
-    },
+		// category: {
+		// 	type: String,
+		// 	required: true,
+		// 	minLength: [3, 'Name is too short'],
+		// 	maxLength: [20, 'Name is too Long'],
+		// },
 
-    publisher:
-    {
-        type:String,
-    },
+		// publisher: {
+		// 	type: String,
+		// },
 
-    bookPhoto:
-    {
-        type:String
-    },
+		// bookPhoto: {
+		// 	type: String,
+		// },
 
-    isIssued:
-    {
-        type:Boolean,
-        default:false
-    },
+		// isIssued: {
+		// 	type: Boolean,
+		// 	default: false,
+		// },
 
-    issuedBookUser:
-    {
-        type:mongoose.Types.ObjectId,
-        ref:'user'
-    },
+		// issuedBookUser: {
+		// 	type: mongoose.Types.ObjectId,
+		// 	ref: 'user',
+		// },
 
-    issueDate:
-    {
-        type:Date,
-    },
+		// issueDate: {
+		// 	type: Date,
+		// },
 
-    returnDate:
-    {
-        type:Date
-    },
+		// returnDate: {
+		// 	type: Date,
+		// },
 
-    late:
-    {
-        type: Number,
-        default: 0
-    },
+		// late: {
+		// 	type: Number,
+		// 	default: 0,
+		// },
 
-    fine:
-    {
-        type:Number,
-        default:0
-    }
-},
-  
-{timestamps:true })
+		// fine: {
+		// 	type: Number,
+		// 	default: 0,
+		// },
+		downloadUrl: {
+			type: String,
+		},
+		bookId: {
+			type: String,
+		},
+		fileSize: {
+			type: String,
+		},
+		uploader: {
+			type: [String],
+			default: [],
+		},
+	},
+
+	{ timestamps: true }
+);
 
 const bookModel = mongoose.model('book', bookSchema);
 
 export default bookModel;
-
