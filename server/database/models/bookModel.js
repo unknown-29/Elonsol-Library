@@ -61,10 +61,6 @@ const bookSchema = mongoose.Schema(
 		fileSize: {
 			type: String,
 		},
-		uploader: {
-			type: [String],
-			default: [],
-		},
 	},
 
 	{ timestamps: true }

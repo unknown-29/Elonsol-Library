@@ -8,14 +8,68 @@ import Loading from '../Loading/Loading';
 
 export default function Book() {
 	const [bookData, setBookData] = useState({});
-	const formRef = useRef(null);
+	const [loading, setLoading] = useState(true);
+	const handleDownload = async () => {
+		setLoading(true);
+		// axios
+		// 	.get(
+		// 		`http://localhost:5000/book/${allURLParams.id}`,
+
+		// 		{
+		// 			headers: {
+		// 				token: localStorage.getItem('userToken'),
+		// 				'Content-Type': 'multipart/form-data',
+		// 			},
+		// 		}
+		// 	)
+		// 	.then(({ data }) => {
+		// 		console.log(data);
+		// 	});
+		try {
+			const response = await axios.get(
+				`http://localhost:5000/book/${allURLParams.id}`,
+				{
+					headers: {
+						token: localStorage.getItem('userToken'),
+						'Content-Type': 'multipart/form-data',
+					},
+
+					responseType: 'blob',
+					onDownloadProgress: (progressEvent) => {
+						const percent = Math.round(
+							(progressEvent.loaded * 100) / progressEvent.total
+						);
+						// console.log(`Download progress: ${percent}%`);
+						// Update your progress bar here
+					},
+				}
+			);
+
+			const blob = response.data;
+			const downloadLink = document.createElement('a');
+			const objectUrl = URL.createObjectURL(blob);
+
+			downloadLink.href = objectUrl;
+			downloadLink.download = 'downloaded-file.pdf';
+			downloadLink.click();
+
+			URL.revokeObjectURL(objectUrl);
+			setLoading(false);
+		} catch (error) {
+			console.error('Error downloading the file:');
+			const errorMessage = await error.response.data.text();
+			const errorData = JSON.parse(errorMessage);
+			console.error('Backend Error Message:', errorData.message);
+			console.error('Status:', error.response.status);
+			alert(`Error downloading the file: ${errorData.message}`);
+			setLoading(false);
+		}
+	};
 	const handleUpload = () => {
-		formRef.current.innerHTML = '';
 		const input = document.createElement('input');
 		input.setAttribute('name', 'bookfile');
 		input.setAttribute('type', 'file');
 		input.setAttribute('accept', 'application/pdf');
-		formRef.current.appendChild(input);
 		input.click();
 		input.addEventListener('change', async () => {
 			if (input.files.length > 0) {
@@ -24,6 +78,7 @@ export default function Book() {
 				formData.append(`file`, file);
 				// console.log(formData);
 				try {
+					setLoading(true);
 					const response = await axios.post(
 						`http://localhost:5000/book/${allURLParams.id}`,
 						formData,
@@ -34,10 +89,12 @@ export default function Book() {
 							},
 						}
 					);
-
+					setLoading(false);
 					console.log('Upload successful!', response.data);
 				} catch (error) {
+					alert("server is busy can't upload right now!!!");
 					console.error('Upload failed:', error);
+					setLoading(false);
 				}
 			}
 		});
@@ -45,11 +102,13 @@ export default function Book() {
 	let allURLParams = useParams();
 
 	async function getBookData() {
+		setLoading(true);
 		let { data } = await axios.get(
 			`https://openlibrary.org/works/${allURLParams.id}.json`
 		);
 		setBookData(data);
 		// console.log(data);
+		setLoading(false);
 
 		const authors = [];
 		for (const author of data.authors) {
@@ -67,7 +126,7 @@ export default function Book() {
 	useEffect(() => {
 		getBookData();
 	}, []);
-	return !bookData ? (
+	return loading ? (
 		<Loading />
 	) : (
 		<>
@@ -124,25 +183,28 @@ export default function Book() {
 										<span className='fw-bold text-black'>Category : </span>
 										{bookData.subjects ? bookData.subjects?.join(' / ') : 'N/A'}
 									</p>
-									<button
-										variant='primary'
-										onClick={handleUpload}
-										className='btn btn-danger w-50 mb-3'
-									>
-										Upload this book
-									</button>
+									<div className='d-flex flex-row gap-3'>
+										<button
+											variant='primary'
+											onClick={handleUpload}
+											className='btn btn-danger w-30'
+										>
+											Upload this book
+										</button>
+										<button
+											variant='primary'
+											onClick={handleDownload}
+											className='btn btn-danger w-30'
+										>
+											Download this book
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<form
-				hidden='true'
-				encType='multipart/form-data'
-				action='/xyz'
-				ref={formRef}
-			></form>
 		</>
 	);
 }

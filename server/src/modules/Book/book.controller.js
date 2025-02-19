@@ -14,92 +14,112 @@ function bytesToSize(bytes) {
 	return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
 }
 
+export const downloadBook = catchAsyncError(async (req, res, next) => {
+	try {
+		// console.log(req.params.bookId);
+		const storage = await new Storage({
+			email: 'devgmehta1608@gmail.com',
+			password: 'Dgm@29042003',
+		}).ready;
+		const { downloadUrl } = await bookModel.findOne({
+			bookId: req.params.bookId,
+		});
+		// console.log(downloadUrl);
+		File.fromURL(downloadUrl).download().pipe(res);
+	} catch (error) {
+		next(new AppError('Book not uploaded by anyone yet', 404));
+	}
+	// console.log(file);
+});
+
 export const uploadBook = catchAsyncError(async (req, res, next) => {
 	// console.log('uploadBook', req.file, req.params);
 	const storage = await new Storage({
 		email: 'devgmehta1608@gmail.com',
 		password: 'Dgm@29042003',
 	}).ready;
-	const CHUNK_SIZE = 5 * 1024 * 1024; // 5 MB per chunk (you can adjust this as needed)
+	// const CHUNK_SIZE = 5 * 512 * 1024;
 
-	async function uploadWithProgress(req) {
-		const totalBytes = req.file.buffer.length;
-		let uploadedBytes = 0;
-		const totalChunks = Math.ceil(totalBytes / CHUNK_SIZE);
-		let file;
-		// Function to upload chunks
-		const uploadChunk = async (chunk, startByte, endByte) => {
-			const chunkData = req.file.buffer.slice(startByte, endByte);
+	// async function uploadWithProgress(req) {
+	// 	const totalBytes = req.file.buffer.length;
+	// 	let uploadedBytes = 0;
+	// 	const totalChunks = Math.ceil(totalBytes / CHUNK_SIZE);
+	// 	let file;
+	// 	// Function to upload chunks
+	// 	const uploadChunk = async (chunk, startByte, endByte) => {
+	// 		const chunkData = req.file.buffer.slice(startByte, endByte);
 
-			// Simulate the upload (replace this with your actual upload code)
-			file = await storage.upload(
-				{
-					name: `${req.params.bookId.toString()}.pdf`,
-					allowUploadBuffering: true,
-				},
-				chunkData
-			).complete;
+	// 		// Simulate the upload (replace this with your actual upload code)
+	// 		file = await storage.upload(
+	// 			{
+	// 				name: `${req.params.bookId.toString()}.pdf`,
+	// 				allowUploadBuffering: true,
+	// 			},
+	// 			chunkData
+	// 		).complete;
 
-			// Update progress
-			uploadedBytes += chunkData.length;
-			const percentage = (uploadedBytes / totalBytes) * 100;
-			console.log(`Upload Progress: ${percentage.toFixed(2)}%`);
-		};
+	// 		// Update progress
+	// 		uploadedBytes += chunkData.length;
+	// 		const percentage = (uploadedBytes / totalBytes) * 100;
+	// 		console.log(`Upload Progress: ${percentage.toFixed(2)}%`);
+	// 	};
 
-		// Start uploading chunks
-		for (let i = 0; i < totalChunks; i++) {
-			const startByte = i * CHUNK_SIZE;
-			const endByte = Math.min(startByte + CHUNK_SIZE, totalBytes);
+	// 	// Start uploading chunks
+	// 	for (let i = 0; i < totalChunks; i++) {
+	// 		const startByte = i * CHUNK_SIZE;
+	// 		const endByte = Math.min(startByte + CHUNK_SIZE, totalBytes);
 
-			await uploadChunk(
-				req.file.buffer.slice(startByte, endByte),
-				startByte,
-				endByte
-			);
-		}
-		file.link().then(async (link) => {
-			// console.log(link);
-			// console.log('The file was uploaded!');
-			// console.log(bookModel);
-			const book = await bookModel.insertMany([
-				{
-					bookId: req.params.bookId.toString(),
-					downloadUrl: link.toString(),
-					fileSize: file.size.toString(),
-				},
-			]);
+	// 		await uploadChunk(
+	// 			req.file.buffer.slice(startByte, endByte),
+	// 			startByte,
+	// 			endByte
+	// 		);
+	// 	}
+	// 	file.link().then(async (link) => {
+	// 		// console.log(link);
+	// 		// console.log('The file was uploaded!');
+	// 		// console.log(bookModel);
+	// 		const book = await bookModel.insertMany([
+	// 			{
+	// 				bookId: req.params.bookId.toString(),
+	// 				downloadUrl: link.toString(),
+	// 				fileSize: file.size.toString(),
+	// 			},
+	// 		]);
+	// 		book
+	// 			? res.status(200).json({ status: 200, message: 'success' })
+	// 			: next(new AppError('failed to insert book details', 400));
+	// 	});
+	// 	console.log('Upload Complete!');
+	// }
+
+	// // Call the function
+	// uploadWithProgress(req);
+
+	const file = await storage.upload(
+		{
+			name: `${req.params.bookId.toString()}.pdf`,
+			allowUploadBuffering: true,
+		},
+		req.file.buffer
+	).complete;
+	file.link().then(async (link) => {
+		// console.log(link);
+		// console.log('The file was uploaded!');
+		// console.log(bookModel);
+		try {
+			const book = await bookModel.insertMany({
+				bookId: req.params.bookId.toString(),
+				downloadUrl: link.toString(),
+				fileSize: file.size.toString(),
+			});
 			book
 				? res.status(200).json({ status: 200, message: 'success' })
-				: next(new AppError('failed to insert book details', 400));
-		});
-		console.log('Upload Complete!');
-	}
-
-	// Call the function
-	uploadWithProgress(req);
-
-	// const file = await storage.upload(
-	// 	{
-	// 		name: `${req.params.bookId.toString()}.pdf`,
-	// 		allowUploadBuffering: true,
-	// 	},
-	// 	req.file.buffer
-	// ).complete;
-	// file.link().then(async (link) => {
-	// 	// console.log(link);
-	// 	console.log('The file was uploaded!');
-	// 	// console.log(bookModel);
-	// 	const book = await bookModel.insertMany([
-	// 		{
-	// 			bookId: req.params.bookId.toString(),
-	// 			downloadUrl: link.toString(),
-	// 			fileSize: file.size.toString()
-	// 		},
-	// 	]);
-	// 	book
-	// 		? res.status(200).json({ status: 200, message: 'success' })
-	// 		: next(new AppError('failed to insert book details', 400));
-	// });
+				: next(new AppError('failed to upload book', 400));
+		} catch (error) {
+			console.error(error);
+		}
+	});
 });
 
 export const addBook = catchAsyncError(async (req, res, next) => {

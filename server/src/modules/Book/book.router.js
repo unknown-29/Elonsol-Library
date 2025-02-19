@@ -8,12 +8,9 @@ import * as bookValidation from './book.validation.js';
 
 const router = Router();
 
-router.post(
-	'/:bookId',
-	userAuth,
-	fileUpload('file'),
-	bookController.uploadBook
-);
+router
+	.get('/:bookId', userAuth, bookController.downloadBook)
+	.post('/:bookId', userAuth, fileUpload('file'), bookController.uploadBook);
 router.get('/', userAuth, bookController.getAllBooks);
 router.get('/books/:id', userAuth, bookController.getBookById);
 router.post(
@@ -25,7 +22,7 @@ router.post(
 router.post(
 	'/return',
 	userAuth,
-	validation(bookValidation.returnBookSchema),
+	//validation(bookValidation.returnBookSchema),
 	bookController.returnBook
 );
 router.get('/issue', userAuth, bookController.getIssuedBooks);
