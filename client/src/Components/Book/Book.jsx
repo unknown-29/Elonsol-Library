@@ -50,7 +50,7 @@ export default function Book() {
 			const objectUrl = URL.createObjectURL(blob);
 
 			downloadLink.href = objectUrl;
-			downloadLink.download = 'downloaded-file.pdf';
+			downloadLink.download = `${bookData.title}-${allURLParams.id}.pdf`;
 			downloadLink.click();
 
 			URL.revokeObjectURL(objectUrl);
