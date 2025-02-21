@@ -5,10 +5,15 @@ import Sidebar from '../Sidebar/Sidebar';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Loading from '../Loading/Loading';
-
+import { io } from 'socket.io-client';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 export default function Book() {
+	let allURLParams = useParams();
 	const [bookData, setBookData] = useState({});
 	const [loading, setLoading] = useState(true);
+	const [uploadProgress, setUploadProgress] = useState(0);
+	const [isUploading, setIsUploading] = useState(false);
+	const [socket, setSocket] = useState(null);
 	const handleDownload = async () => {
 		setLoading(true);
 		// axios
@@ -27,7 +32,7 @@ export default function Book() {
 		// 	});
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/book/${allURLParams.id}`,
+				`${process.env.REACT_APP_SERVER_BASE_URL}/book/${allURLParams.id}`,
 				{
 					headers: {
 						token: localStorage.getItem('userToken'),
@@ -78,9 +83,9 @@ export default function Book() {
 				formData.append(`file`, file);
 				// console.log(formData);
 				try {
-					setLoading(true);
+					setIsUploading(true);
 					const response = await axios.post(
-						`http://localhost:5000/book/${allURLParams.id}`,
+						`${process.env.REACT_APP_SERVER_BASE_URL}/book/${allURLParams.id}`,
 						formData,
 						{
 							headers: {
@@ -89,17 +94,18 @@ export default function Book() {
 							},
 						}
 					);
-					setLoading(false);
-					console.log('Upload successful!', response.data);
+					setUploadProgress(0);
+					setIsUploading(false);
+					console.log('Upload successful!');
 				} catch (error) {
 					alert("server is busy can't upload right now!!!");
 					console.error('Upload failed:', error);
-					setLoading(false);
+					setUploadProgress(0);
+					setIsUploading(false);
 				}
 			}
 		});
 	};
-	let allURLParams = useParams();
 
 	async function getBookData() {
 		setLoading(true);
@@ -107,7 +113,6 @@ export default function Book() {
 			`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}/works/${allURLParams.id}.json`
 		);
 		setBookData(data);
-		// console.log(data);
 		setLoading(false);
 
 		const authors = [];
@@ -115,7 +120,7 @@ export default function Book() {
 			let {
 				data: { name },
 			} = await axios.get(
-				`process.env.REACT_APP_OPENLIBRARY_BASE_URL${author.author.key}.json`
+				`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}${author.author.key}.json`
 			);
 			authors.push({
 				name,
@@ -127,7 +132,17 @@ export default function Book() {
 
 	useEffect(() => {
 		getBookData();
-	}, []);
+		const newSocket = io(process.env.REACT_APP_SERVER_BASE_URL);
+		setSocket(newSocket);
+		newSocket.on('connect', () => console.log('socket connected'));
+		newSocket.on('disconnect', () => console.log('socket disconnected'));
+		newSocket.on('uploadProgress', (data) => {
+			setUploadProgress(data.percent);
+			console.log('Received upload progress from server:', data);
+		});
+
+		return () => newSocket.close();
+	}, [setSocket]);
 	return loading ? (
 		<Loading />
 	) : (
@@ -201,6 +216,7 @@ export default function Book() {
 											Download this book
 										</button>
 									</div>
+									{isUploading && <ProgressBar now={uploadProgress} />}
 								</div>
 							</div>
 						</div>
