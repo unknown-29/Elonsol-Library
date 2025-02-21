@@ -104,7 +104,7 @@ export default function Book() {
 	async function getBookData() {
 		setLoading(true);
 		let { data } = await axios.get(
-			`https://openlibrary.org/works/${allURLParams.id}.json`
+			`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}/works/${allURLParams.id}.json`
 		);
 		setBookData(data);
 		// console.log(data);
@@ -114,10 +114,12 @@ export default function Book() {
 		for (const author of data.authors) {
 			let {
 				data: { name },
-			} = await axios.get(`https://openlibrary.org${author.author.key}.json`);
+			} = await axios.get(
+				`process.env.REACT_APP_OPENLIBRARY_BASE_URL${author.author.key}.json`
+			);
 			authors.push({
 				name,
-				link: `https://openlibrary.org${author.author.key}`,
+				link: `process.env.REACT_APP_OPENLIBRARY_BASE_URL${author.author.key}`,
 			});
 		}
 		setBookData({ ...data, authors });
@@ -144,7 +146,7 @@ export default function Book() {
 								<div className='p-5'>
 									<img
 										className='w-100 rounded-2'
-										src={`https://covers.openlibrary.org/b/ID/${allURLParams.bookPhoto}-M.jpg`}
+										src={`${process.env.REACT_APP_OPENLIBRARY_IMAGE_BASE_URL}/${allURLParams.bookPhoto}-M.jpg`}
 										alt=''
 									/>
 									<h4 className='text-center p-3 pb-0 fw-bolder'>

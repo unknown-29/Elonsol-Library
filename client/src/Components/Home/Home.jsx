@@ -15,7 +15,7 @@ export default function Home() {
 	async function getDataFromURL() {
 		setLoading(true);
 		let { data } = await axios.get(
-			'https://openlibrary.org/trending/weekly.json?limit=50',
+			`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}/trending/weekly.json?limit=50`,
 			// 'http://localhost:5000/book'
 			{
 				// headers: {
@@ -32,7 +32,7 @@ export default function Home() {
 		setAllBooks([]);
 		setLoading(true);
 		let { data } = await axios.get(
-			`https://openlibrary.org/search.json?q=${bookName}`
+			`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}/search.json?q=${bookName}`
 			// `http://localhost:5000/book/searchBooks/${bookName}`,
 			// {
 			// 	headers: {

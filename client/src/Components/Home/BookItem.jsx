@@ -32,7 +32,7 @@ export default function BookItem(probs) {
 						<div className='book-fixed-height overflow-hidden mx-auto'>
 							<img
 								className='w-100'
-								src={`https://covers.openlibrary.org/b/ID/${bookPhoto}-M.jpg`}
+								src={`${process.env.REACT_APP_OPENLIBRARY_IMAGE_BASE_URL}/${bookPhoto}-M.jpg`}
 								alt=''
 							/>
 						</div>
