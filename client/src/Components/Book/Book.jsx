@@ -12,10 +12,12 @@ export default function Book() {
 	const [bookData, setBookData] = useState({});
 	const [loading, setLoading] = useState(true);
 	const [uploadProgress, setUploadProgress] = useState(0);
+	const [downloadProgress, setDownloadProgress] = useState(0);
 	const [isUploading, setIsUploading] = useState(false);
+	const [isDownloading, setIsDownloading] = useState(false);
 	const [socket, setSocket] = useState(null);
 	const handleDownload = async () => {
-		setLoading(true);
+		// setLoading(true);
 		// axios
 		// 	.get(
 		// 		`http://localhost:5000/book/${allURLParams.id}`,
@@ -31,6 +33,8 @@ export default function Book() {
 		// 		console.log(data);
 		// 	});
 		try {
+			setDownloadProgress(0);
+			setIsDownloading(true);
 			const response = await axios.get(
 				`${process.env.REACT_APP_SERVER_BASE_URL}/book/${allURLParams.id}`,
 				{
@@ -40,13 +44,6 @@ export default function Book() {
 					},
 
 					responseType: 'blob',
-					onDownloadProgress: (progressEvent) => {
-						const percent = Math.round(
-							(progressEvent.loaded * 100) / progressEvent.total
-						);
-						// console.log(`Download progress: ${percent}%`);
-						// Update your progress bar here
-					},
 				}
 			);
 
@@ -59,7 +56,8 @@ export default function Book() {
 			downloadLink.click();
 
 			URL.revokeObjectURL(objectUrl);
-			setLoading(false);
+			setDownloadProgress(0);
+			setIsDownloading(false);
 		} catch (error) {
 			console.error('Error downloading the file:');
 			const errorMessage = await error.response.data.text();
@@ -67,7 +65,8 @@ export default function Book() {
 			console.error('Backend Error Message:', errorData.message);
 			console.error('Status:', error.response.status);
 			alert(`Error downloading the file: ${errorData.message}`);
-			setLoading(false);
+			setDownloadProgress(0);
+			setIsDownloading(false);
 		}
 	};
 	const handleUpload = () => {
@@ -83,6 +82,7 @@ export default function Book() {
 				formData.append(`file`, file);
 				// console.log(formData);
 				try {
+					setUploadProgress(0);
 					setIsUploading(true);
 					const response = await axios.post(
 						`${process.env.REACT_APP_SERVER_BASE_URL}/book/${allURLParams.id}`,
@@ -140,7 +140,10 @@ export default function Book() {
 			setUploadProgress(data.percent);
 			console.log('Received upload progress from server:', data);
 		});
-
+		newSocket.on('downloadProgress', (data) => {
+			setDownloadProgress(data.percent);
+			console.log('Received download progress from server:', data);
+		});
 		return () => newSocket.close();
 	}, [setSocket]);
 	return loading ? (
@@ -200,7 +203,7 @@ export default function Book() {
 										<span className='fw-bold text-black'>Category : </span>
 										{bookData.subjects ? bookData.subjects?.join(' / ') : 'N/A'}
 									</p>
-									<div className='d-flex flex-row gap-3'>
+									<div className='d-flex flex-row gap-3 p-3 justify-content-around'>
 										<button
 											variant='primary'
 											onClick={handleUpload}
@@ -216,7 +219,20 @@ export default function Book() {
 											Download this book
 										</button>
 									</div>
-									{isUploading && <ProgressBar now={uploadProgress} />}
+									<div className='mt-2'>
+										{isUploading && (
+											<ProgressBar
+												variant='primary'
+												now={uploadProgress}
+											/>
+										)}
+										{isDownloading && (
+											<ProgressBar
+												variant='success'
+												now={downloadProgress}
+											/>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>

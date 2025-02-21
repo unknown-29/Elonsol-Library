@@ -15,6 +15,7 @@ function bytesToSize(bytes) {
 
 export const downloadBook = catchAsyncError(async (req, res, next) => {
 	try {
+		const io = req.app.get('socketio');
 		// console.log(req.params.bookId);
 		const storage = await new Storage({
 			email: 'devgmehta1608@gmail.com',
@@ -27,8 +28,11 @@ export const downloadBook = catchAsyncError(async (req, res, next) => {
 		const file = File.fromURL(downloadUrl);
 		file
 			.download()
-			.pipe(res)
-			.on('progress', (x, y) => console.log(x, y));
+			.on('progress', (ob) => {
+				const percent = (ob.bytesLoaded / ob.bytesTotal) * 100;
+				io.emit('downloadProgress', { percent });
+			})
+			.pipe(res);
 	} catch (error) {
 		next(new AppError('Book not uploaded by anyone yet', 404));
 	}
