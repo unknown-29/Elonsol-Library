@@ -32,15 +32,16 @@ export default function Home() {
 		setAllBooks([]);
 		setLoading(true);
 		let { data } = await axios.get(
-			`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}/search.json?q=${bookName}`
+			`${process.env.REACT_APP_SERVER_BASE_URL}/book/searchBooks/${bookName}`,
 			// `http://localhost:5000/book/searchBooks/${bookName}`,
-			// {
-			// 	headers: {
-			// 		token: localStorage.getItem('userToken'),
-			// 	},
-			// }
+			{
+				headers: {
+					token: localStorage.getItem('userToken'),
+				},
+			}
 		);
-		setAllBooks(data.docs);
+		setAllBooks(data.books);
+		setLoading(false)
 	}
 
 	function validateSearchData() {
