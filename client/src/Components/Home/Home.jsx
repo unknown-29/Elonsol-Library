@@ -15,16 +15,16 @@ export default function Home() {
 	async function getDataFromURL() {
 		setLoading(true);
 		let { data } = await axios.get(
-			`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}/trending/weekly.json?limit=50`,
+			`${process.env.REACT_APP_SERVER_BASE_URL}/book`,
 			// 'http://localhost:5000/book'
 			{
-				// headers: {
-				// 	token: localStorage.getItem('userToken'),
-				// },
+				headers: {
+					token: localStorage.getItem('userToken'),
+				},
 			}
 		);
 
-		setAllBooks(data.works);
+		setAllBooks(data.books);
 		setLoading(false);
 	}
 
@@ -32,15 +32,16 @@ export default function Home() {
 		setAllBooks([]);
 		setLoading(true);
 		let { data } = await axios.get(
-			`${process.env.REACT_APP_OPENLIBRARY_BASE_URL}/search.json?q=${bookName}`
+			`${process.env.REACT_APP_SERVER_BASE_URL}/book/searchBooks/${bookName}`,
 			// `http://localhost:5000/book/searchBooks/${bookName}`,
-			// {
-			// 	headers: {
-			// 		token: localStorage.getItem('userToken'),
-			// 	},
-			// }
+			{
+				headers: {
+					token: localStorage.getItem('userToken'),
+				},
+			}
 		);
-		setAllBooks(data.docs);
+		setAllBooks(data.books);
+		setLoading(false)
 	}
 
 	function validateSearchData() {
@@ -126,13 +127,12 @@ export default function Home() {
 							{allBooks.length !== 0 ? (
 								allBooks.map((book, index) => (
 									<BookItem
-										key={index}
-										_id={book.key.split('/')[2]}
-										name={book.title}
+										key={book._id.toString()}
+										_id={book._id.toString()}
+										name={book.name}
 										category={book.category}
-										publisher={book.publisher}
-										bookPhoto={`${book.cover_i}`}
-										isIssued={book.isIssued}
+										author={book.author}
+										cover={book.cover}
 									/>
 								))
 							) : loading === true ? (

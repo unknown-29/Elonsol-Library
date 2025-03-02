@@ -29,7 +29,10 @@ export default function Login() {
 
 	async function sendRegisterDataToAPI() {
 		setLoading(true);
-		let { data } = await axios.post('http://localhost:3000/user/signin', user);
+		let { data } = await axios.post(
+			`${process.env.REACT_APP_SERVER_BASE_URL}/user/signin`,
+			user
+		);
 		setLoading(false);
 		console.log(data);
 
