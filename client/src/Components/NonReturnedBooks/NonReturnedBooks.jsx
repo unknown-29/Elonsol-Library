@@ -9,7 +9,7 @@ export default function NonReturnedBooks() {
     const[bookId,setBookId] = useState('')
 
     async function getDataFromURL() {
-        let {data} = await axios.get('http://localhost:5000/book/nonreturn', {
+        let {data} = await axios.get('http://localhost:3000/book/nonreturn', {
           headers: {
             token: localStorage.getItem('userToken')
           },
@@ -19,7 +19,7 @@ export default function NonReturnedBooks() {
       }
 
       async function returnBook(id){
-        let {data} = await axios.post('http://localhost:5000/book/return',{bookId:id}, {
+        let {data} = await axios.post('http://localhost:3000/book/return',{bookId:id}, {
           headers: {
             token: localStorage.getItem('userToken')
           },

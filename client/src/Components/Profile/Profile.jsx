@@ -14,7 +14,7 @@ export default function Profile() {
         <div className="row">
           <div className="col-2">
             <div className="position-fixed col-lg-2">
-              <Sidebar />
+              <Sidebar page = "Profile"/>
             </div>
           </div>
 

@@ -71,7 +71,7 @@ export default function Home() {
 				<div className='row'>
 					<div className='col-2'>
 						<div className='position-fixed col-lg-2'>
-							<Sidebar />
+							<Sidebar page = "Home"/>
 						</div>
 					</div>
 
@@ -88,13 +88,36 @@ export default function Home() {
 								}}
 								type='search'
 								className='form-control d-inline my-4'
-								placeholder='Enter Book Name ...'
+								placeholder='Search book name'
 								name='name'
 								id='name'
 							/>
+
+							<button type="button" class="btn btn-warning ms-3 text-white d-inline-block" data-bs-toggle="modal" data-bs-target="#exampleModal">
+								Filter
+							</button>
+
+							<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">View Available Books</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											To view present books available for download, Kindly press `Okay` button.
+										</div>
+										<div class="modal-footer d-flex justify-content-center">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+											<button type="button" class="btn btn-warning text-white d-inline-block">Okay</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
 							<button
 								onClick={validateAndSearch}
-								className='btn btn-danger text-white d-inline-block ms-3 h-50'
+								className='btn btn-warning text-white d-inline-block ms-3 h-50'
 							>
 								search
 							</button>

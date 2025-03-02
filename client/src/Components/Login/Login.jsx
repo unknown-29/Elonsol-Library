@@ -29,7 +29,7 @@ export default function Login() {
 
 	async function sendRegisterDataToAPI() {
 		setLoading(true);
-		let { data } = await axios.post('http://localhost:5000/user/signin', user);
+		let { data } = await axios.post('http://localhost:3000/user/signin', user);
 		setLoading(false);
 		console.log(data);
 

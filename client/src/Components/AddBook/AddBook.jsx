@@ -25,7 +25,7 @@ export default function AddBook() {
       formData.append('path', photo);
   
       try {
-        const response = await axios.post('http://localhost:5000/book', formData , {
+        const response = await axios.post('http://localhost:3000/book', formData , {
             headers: {
               token: localStorage.getItem('userToken')
             },
@@ -68,7 +68,7 @@ export default function AddBook() {
       <div className="row">
         <div className="col-2">
             <div className='position-fixed col-lg-2'>
-                <Sidebar/>
+                <Sidebar page = "Create"/>
             </div>
         </div>
 

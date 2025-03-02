@@ -7,7 +7,7 @@ export default function IssuedBooks() {
     const[bookId,setBookId] = useState('')
 
     async function getDataFromURL() {
-        let {data} = await axios.get('http://localhost:5000/book/issue', {
+        let {data} = await axios.get('http://localhost:3000/book/issue', {
           headers: {
             token: localStorage.getItem('userToken')
           },
