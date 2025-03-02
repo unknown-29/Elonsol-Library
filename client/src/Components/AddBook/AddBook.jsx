@@ -7,9 +7,9 @@ import { motion } from 'framer-motion';
 export default function AddBook() {
 	const [name, setName] = useState('');
 	const [category, setCategory] = useState(null);
-	const [publisher, setPublisher] = useState(null);
+	const [author, setAuthor] = useState(null);
 	const [error, setError] = useState(false);
-	const [photo, setPhoto] = useState(null);
+	const [cover, setCover] = useState(null);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -17,8 +17,8 @@ export default function AddBook() {
 		const formData = new FormData();
 		formData.append('name', name);
 		formData.append('category', category);
-		formData.append('publisher', publisher);
-		formData.append('path', photo);
+		formData.append('author', author);
+		formData.append('cover', cover);
 
 		try {
 			const response = await axios.post(
@@ -34,7 +34,7 @@ export default function AddBook() {
 			if (response.data?.message === 'success') {
 				setError(true);
 				document.getElementById('title').value = '';
-				document.getElementById('photo').value = '';
+				document.getElementById('cover').value = '';
 			}
 		} catch (error) {
 			console.log(error);
@@ -84,12 +84,12 @@ export default function AddBook() {
 							<p className='fw-bold fs-5'>Enter Book Details Now ....</p>
 							<form onSubmit={handleSubmit}>
 								<input
-									onChange={(e) => setPhoto(e.target.files[0])}
+									onChange={(e) => setCover(e.target.files[0])}
 									type='file'
 									className='form-control my-2'
-									id='photo'
+									id='cover'
 									name='path'
-									placeholder='Choose Your Photo'
+									placeholder='Choose Your cover'
 								/>
 								<input
 									onChange={(e) => setName(e.target.value)}
@@ -108,11 +108,11 @@ export default function AddBook() {
 									placeholder='Enter Book Category'
 								/>
 								<input
-									onChange={(e) => setPublisher(e.target.value)}
+									onChange={(e) => setAuthor(e.target.value)}
 									type='text'
 									className='form-control my-2'
-									id='publisher'
-									name='publisher'
+									id='author'
+									name='author'
 									placeholder='Enter Book Author'
 								/>
 								<button className=' btn btn-danger w-100 rounded-2 text-light'>

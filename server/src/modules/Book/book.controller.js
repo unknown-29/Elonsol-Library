@@ -4,14 +4,20 @@ import userModel from '../../../database/models/userModel.js';
 import { AppError } from '../../utils/AppError.js';
 import { catchAsyncError } from '../../utils/catchAsyncError.js';
 import { Storage, File } from 'megajs';
+import dotenv from 'dotenv'
+import Datauri from 'datauri/parser.js';
+import { v2 as cloudinary } from 'cloudinary'
+import path from 'path'
 /* https://gist.github.com/lanqy/5193417 */
-function bytesToSize(bytes) {
-	var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-	if (bytes == 0) return 'n/a';
-	var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-	if (i == 0) return bytes + ' ' + sizes[i];
-	return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
-}
+dotenv.config()
+
+// function bytesToSize(bytes) {
+// 	var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+// 	if (bytes == 0) return 'n/a';
+// 	var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+// 	if (i == 0) return bytes + ' ' + sizes[i];
+// 	return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+// }
 
 export const downloadBook = catchAsyncError(async (req, res, next) => {
 	try {
@@ -82,16 +88,46 @@ export const uploadBook = catchAsyncError(async (req, res, next) => {
 });
 
 export const addBook = catchAsyncError(async (req, res, next) => {
-	const { name, category, publisher } = req.body;
-	const book = await bookModel.insertMany({
-		name,
-		category,
-		publisher,
-		bookPhoto: req.file.filename,
+	const dUri = new Datauri();
+	const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+	cloudinary.config({
+		cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+		api_key: process.env.CLOUDINARY_API_KEY,
+		api_secret: process.env.CLOUDINARY_API_SECRET,
 	});
-	book
-		? res.status(200).json({ status: 200, message: 'success' })
-		: next(new AppError('failed to insert user', 400));
+	if (req.file) {
+		const file = dataUri(req).content;
+		try {
+			const result = await cloudinary.uploader.upload(file)
+			const cover = result.url;
+			const { name, category, author } = req.body;
+			const book = await bookModel.insertMany({
+				name,
+				category,
+				author,
+				cover,
+			});
+			res.status(200).json({ status: 200, message: 'success' })
+			// return res.status(200).json({ success: true })
+		} catch (error) {
+			console.error(error)
+			next(new AppError('failed to add book', 400));
+		}
+		// .catch((err) => res.status(400).json({ messge: 'someting went wrong while processing your request', data: { err } }))
+	}
+	// console.log(req.file);
+
+	// console.log(result)
+	// cloudinary.uploader.upload_stream({ resource_type: 'auto' }, (error, result) => {
+	//   if (error) {
+	//     return res.status(500).send('Error uploading file to Cloudinary');
+	//   }
+
+	//   // Return the result (Cloudinary URL, etc.)
+	//   res.json({ url: result.secure_url });
+	// }).end(req.file.buffer);  // Upload the file buffer from req.file
+
+	// console.log('add book',name, category,author,req.file);
 });
 
 export const getAllBooks = catchAsyncError(async (req, res, next) => {
