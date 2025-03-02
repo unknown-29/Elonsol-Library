@@ -20,7 +20,7 @@ let routers = createBrowserRouter([
 			{ path: 'login', element: <Login /> },
 			{ path: 'home', element: <Home /> },
 			{ path: 'addBook', element: <AddBook /> },
-			{ path: 'Book/:id/:bookPhoto', element: <Book /> },
+			{ path: 'book/:id', element: <Book /> },
 			{ path: 'profile', element: <Profile /> },
 			{ path: 'nonReturnedBooks', element: <NonReturnedBooks /> },
 			{ path: 'issuedBooks', element: <IssuedBooks /> },

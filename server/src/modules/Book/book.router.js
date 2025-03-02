@@ -7,12 +7,12 @@ import * as bookController from './book.controller.js';
 import * as bookValidation from './book.validation.js';
 
 const router = Router();
-router.post('/',userAuth,fileUpload('cover'),bookController.addBook)
+router.post('/', userAuth, fileUpload('cover'), bookController.addBook).get('/', userAuth, bookController.getAllBooks)
 router
-	.get('/:bookId', userAuth, bookController.downloadBook)
-	.post('/:bookId', userAuth, fileUpload('file'), bookController.uploadBook);
-router.get('/', userAuth, bookController.getAllBooks);
-router.get('/books/:id', userAuth, bookController.getBookById);
+	.get('/download/:bookId', userAuth, bookController.downloadBook)
+	.post('/upload/:bookId', userAuth, fileUpload('book'), bookController.uploadBook);
+
+router.get('/:id', userAuth, bookController.getBookById);
 router.post(
 	'/issue',
 	userAuth,

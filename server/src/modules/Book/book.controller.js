@@ -8,6 +8,7 @@ import dotenv from 'dotenv'
 import Datauri from 'datauri/parser.js';
 import { v2 as cloudinary } from 'cloudinary'
 import path from 'path'
+import mongoose from 'mongoose';
 /* https://gist.github.com/lanqy/5193417 */
 dotenv.config()
 
@@ -47,7 +48,7 @@ export const downloadBook = catchAsyncError(async (req, res, next) => {
 
 export const uploadBook = catchAsyncError(async (req, res, next) => {
 	// console.log('uploadBook', req.file, req.params);
-	console.log('called ');
+	// console.log('called ', req.params.bookId);
 	const io = req.app.get('socketio');
 	try {
 		const storage = await new Storage({
@@ -69,16 +70,13 @@ export const uploadBook = catchAsyncError(async (req, res, next) => {
 		file.on('complete', (data) => {
 			data.link().then(async (link) => {
 				try {
-					const book = await bookModel.insertMany({
-						bookId: req.params.bookId.toString(),
+					const book = await bookModel.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(req.params.bookId) }, {
 						downloadUrl: link.toString(),
-						fileSize: data.size.toString(),
 					});
-					book
-						? res.status(200).json({ status: 200, message: 'success' })
-						: next(new AppError('failed to upload book', 400));
+					res.status(200).json({ status: 200, message: 'success' })
 				} catch (error) {
 					console.error(error);
+					next(new AppError('failed to upload book', 400));
 				}
 			});
 		});
@@ -100,34 +98,20 @@ export const addBook = catchAsyncError(async (req, res, next) => {
 		try {
 			const result = await cloudinary.uploader.upload(file)
 			const cover = result.url;
-			const { name, category, author } = req.body;
+			const { name, category, author, description } = req.body;
 			const book = await bookModel.insertMany({
 				name,
 				category,
 				author,
 				cover,
+				description
 			});
-			res.status(200).json({ status: 200, message: 'success' })
-			// return res.status(200).json({ success: true })
+			res.status(200).json({ status: 200, message: 'success', id: book[0]._id.toString() })
 		} catch (error) {
 			console.error(error)
 			next(new AppError('failed to add book', 400));
 		}
-		// .catch((err) => res.status(400).json({ messge: 'someting went wrong while processing your request', data: { err } }))
 	}
-	// console.log(req.file);
-
-	// console.log(result)
-	// cloudinary.uploader.upload_stream({ resource_type: 'auto' }, (error, result) => {
-	//   if (error) {
-	//     return res.status(500).send('Error uploading file to Cloudinary');
-	//   }
-
-	//   // Return the result (Cloudinary URL, etc.)
-	//   res.json({ url: result.secure_url });
-	// }).end(req.file.buffer);  // Upload the file buffer from req.file
-
-	// console.log('add book',name, category,author,req.file);
 });
 
 export const getAllBooks = catchAsyncError(async (req, res, next) => {
@@ -146,6 +130,8 @@ export const getAllBooksByName = catchAsyncError(async (req, res, next) => {
 
 export const getBookById = catchAsyncError(async (req, res, next) => {
 	const { id } = req.params;
+	console.log(id);
+
 	const book = await bookModel.findById(id);
 	res.status(200).json({ status: 200, message: 'success', book });
 });
