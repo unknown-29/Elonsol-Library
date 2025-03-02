@@ -30,7 +30,10 @@ export default function SignUp() {
 
 	async function sendRegisterDataToAPI() {
 		setLoading(true);
-		let { data } = await axios.post('http://localhost:5000/user/signup', user);
+		let { data } = await axios.post(
+			`${process.env.REACT_APP_SERVER_BASE_URL}/user/signup`,
+			user
+		);
 		setLoading(false);
 		console.log(data);
 
