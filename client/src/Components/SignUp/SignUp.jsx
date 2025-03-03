@@ -30,18 +30,22 @@ export default function SignUp() {
 
 	async function sendRegisterDataToAPI() {
 		setLoading(true);
-		let { data } = await axios.post(
-			`${process.env.REACT_APP_SERVER_BASE_URL}/user/signup`,
-			user
-		);
-		setLoading(false);
-		console.log(data);
+		try {
+			let { data } = await axios.post(
+				`${process.env.REACT_APP_SERVER_BASE_URL}/user/signup`,
+				user
+			);
+			let { data: data2 } = await axios.get(`${process.env.REACT_APP_SERVER_BASE_URL}${data.tokenLink}`)
 
-		if (data.message === 'success') {
-			setError('sucess');
-			navigate('/login');
-		} else {
-			setError(data.message);
+			if (data.message === 'success' && data2.message === 'success') {
+				setError('sucess');
+				navigate('/login');
+			}
+		} catch (error) {
+			console.log(error.response.data.message);
+			setError(error.response.data.message);
+		} finally {
+			setLoading(false);
 		}
 	}
 

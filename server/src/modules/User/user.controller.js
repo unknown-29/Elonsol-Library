@@ -31,8 +31,8 @@ export const signUp = catchAsyncError(async (req, res, next) => {
 		expiresIn: '30m',
 	});
 
-	sendEmail({ email, html: verificationHTML(token) });
-	res.status(200).json({ status: 200, message: 'success', user });
+	// sendEmail({ email, html: verificationHTML(token) });
+	res.status(200).json({ status: 200, message: 'success', user, tokenLink: `/user/verify/${token}` });
 });
 
 export const signIn = catchAsyncError(async (req, res, next) => {
@@ -72,9 +72,9 @@ export const verifyUser = catchAsyncError(async (req, res, next) => {
 		{ isVerified: true },
 		{ new: true }
 	);
-	user
-		? res.redirect('http://localhost:3000/login')
-		: next(new AppError('failed', 400));
+	if (!user)
+		next(new AppError('failed', 400));
+	else res.status(200).json({ status: 200, message: 'success' });
 });
 
 export const getUserData = catchAsyncError(async (req, res, next) => {

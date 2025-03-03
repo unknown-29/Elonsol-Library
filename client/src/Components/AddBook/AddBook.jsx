@@ -5,8 +5,10 @@ import Lottie from 'lottie-web';
 import { motion } from 'framer-motion';
 import { io } from 'socket.io-client';
 import Loading from '../Loading/Loading';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddBook() {
+	const navigate = useNavigate()
 	const [name, setName] = useState('');
 	const [category, setCategory] = useState(null);
 	const [author, setAuthor] = useState(null);
@@ -57,7 +59,10 @@ export default function AddBook() {
 			}
 			setLoading(false)
 		} catch (error) {
+			if (error.status === 403) navigate('/login')
 			console.log(error);
+		}
+		finally {
 			setLoading(false)
 		}
 	};

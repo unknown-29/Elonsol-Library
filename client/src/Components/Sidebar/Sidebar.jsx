@@ -21,7 +21,7 @@ export default function Sidebar(props) {
             }
         }
 
-        else if(props.page == 'Profile'){
+        else if (props.page == 'Profile') {
             const homeLink = document.getElementsByClassName("Links")[2];
 
             if (homeLink) {
@@ -29,35 +29,35 @@ export default function Sidebar(props) {
             }
         }
     }, [props.page]);
-  return (
-    <>
-        <div>
-                    <div className="p-0 min-vh-100 side-bar-bg-color">
-                        <ul className="text-light list-unstyled">
+    return (
+        <>
+            <div>
+                <div className="p-0 min-vh-100 side-bar-bg-color">
+                    <ul className="text-light list-unstyled">
 
-                            <li className="p-3 pe-lg-5 d-lg-flex d-none">
-                            <AppLogo/>
-                            </li>
-                            
-                            <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
-                                <Link to="/home" className="nav-link px-0 px-lg-2"> <i className="bi-house"/><span className="px-lg-2 ms-1 d-none d-lg-inline">Home</span> </Link>
-                            </li>
-                        
-                            <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
-                                <Link to="/addBook" className="nav-link px-0 px-lg-2"> <i className="bi bi-cloud-plus"/><span className="px-lg-2 ms-1 d-none d-lg-inline">Create</span> </Link>
-                            </li>
+                        <li className="p-3 pe-lg-5 d-lg-flex d-none">
+                            <AppLogo />
+                        </li>
 
-                            <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
-                                <Link to="/profile" className="nav-link px-0 px-lg-2"> <i className="bi bi-person-circle"></i><span className="px-lg-2 ms-1 d-none d-lg-inline">Profile</span> </Link>
-                            </li>
-                                    
-                            <li className="p-3 pe-lg-5 sidebar-element hover-text-warning">
-                                <Link to="/login" className="nav-link px-0 px-lg-2"> <i className="bi bi-box-arrow-left"></i><span className="px-lg-2 ms-1 d-none d-lg-inline">Logout</span> </Link>
-                            </li>
+                        <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
+                            <Link to="/home" className="nav-link px-0 px-lg-2"> <i className="bi-house" /><span className="px-lg-2 ms-1 d-none d-lg-inline">Home</span> </Link>
+                        </li>
 
-                        </ul>
-                    </div>
+                        <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
+                            <Link to="/addBook" className="nav-link px-0 px-lg-2"> <i className="bi bi-cloud-plus" /><span className="px-lg-2 ms-1 d-none d-lg-inline">Create</span> </Link>
+                        </li>
+
+                        <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
+                            <Link to="/profile" className="nav-link px-0 px-lg-2"> <i className="bi bi-person-circle"></i><span className="px-lg-2 ms-1 d-none d-lg-inline">Profile</span> </Link>
+                        </li>
+
+                        <li className="p-3 pe-lg-5 sidebar-element hover-text-warning">
+                            <Link onClick={() => localStorage.removeItem('userToken')} to="/login" className="nav-link px-0 px-lg-2"> <i className="bi bi-box-arrow-left"></i><span className="px-lg-2 ms-1 d-none d-lg-inline">Logout</span> </Link>
+                        </li>
+
+                    </ul>
+                </div>
             </div>
-    </>
-  )
+        </>
+    )
 }

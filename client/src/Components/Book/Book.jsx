@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -8,6 +8,7 @@ import Loading from '../Loading/Loading';
 import { io } from 'socket.io-client';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 export default function Book() {
+	const navigate = useNavigate()
 	let allURLParams = useParams();
 	const [bookData, setBookData] = useState({});
 	const [loading, setLoading] = useState(true);
@@ -59,6 +60,7 @@ export default function Book() {
 			setDownloadProgress(0);
 			setIsDownloading(false);
 		} catch (error) {
+			if (error.status === 403) navigate('/login')
 			console.error('Error downloading the file:');
 			const errorMessage = await error.response.data.text();
 			const errorData = JSON.parse(errorMessage);
@@ -109,18 +111,24 @@ export default function Book() {
 
 	async function getBookData() {
 		setLoading(true);
-		const { data: { book } } = await axios.get(
-			`${process.env.REACT_APP_SERVER_BASE_URL}/book/${allURLParams.id}`,
-			{
-				headers: {
-					token: localStorage.getItem('userToken'),
-				},
-			}
-		);
-		setBookData(book);
-		console.log(book);
-
-		setLoading(false);
+		try {
+			const { data: { book } } = await axios.get(
+				`${process.env.REACT_APP_SERVER_BASE_URL}/book/${allURLParams.id}`,
+				{
+					headers: {
+						token: localStorage.getItem('userToken'),
+					},
+				}
+			);
+			setBookData(book);
+			console.log(book);
+		} catch (error) {
+			if (error.status === 403) navigate('/login')
+			else alert('server is busy!')
+		}
+		finally {
+			setLoading(false);
+		}
 	}
 
 	useEffect(() => {

@@ -76,7 +76,7 @@ export const uploadBook = catchAsyncError(async (req, res, next) => {
 					res.status(200).json({ status: 200, message: 'success' })
 				} catch (error) {
 					console.error(error);
-					next(new AppError('failed to upload book', 400));
+					next(new AppError('failed to upload book', 500));
 				}
 			});
 		});
@@ -109,7 +109,7 @@ export const addBook = catchAsyncError(async (req, res, next) => {
 			res.status(200).json({ status: 200, message: 'success', id: book[0]._id.toString() })
 		} catch (error) {
 			console.error(error)
-			next(new AppError('failed to add book', 400));
+			next(new AppError('failed to add book', 500));
 		}
 	}
 });
@@ -201,7 +201,7 @@ export const returnBook = catchAsyncError(async (req, res, next) => {
 			next(new AppError('failed', 400));
 		}
 	} else {
-		next(new AppError('book not found or not issued', 400));
+		next(new AppError('book not found or not issued', 404));
 	}
 });
 

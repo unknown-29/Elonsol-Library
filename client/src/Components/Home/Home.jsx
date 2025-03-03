@@ -3,10 +3,12 @@ import React, { useEffect, useState } from 'react';
 import Loading from '../Loading/Loading';
 import Sidebar from '../Sidebar/Sidebar';
 import BookItem from './BookItem';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Joi from 'joi';
 // @todo add pagination
 export default function Home() {
+	let navigate = useNavigate();
 	const [allBooks, setAllBooks] = useState([]);
 	const [bookName, setBookName] = useState('');
 	const [loading, setLoading] = useState(true);
@@ -14,34 +16,48 @@ export default function Home() {
 
 	async function getDataFromURL() {
 		setLoading(true);
-		let { data } = await axios.get(
-			`${process.env.REACT_APP_SERVER_BASE_URL}/book`,
-			// 'http://localhost:5000/book'
-			{
-				headers: {
-					token: localStorage.getItem('userToken'),
-				},
-			}
-		);
+		try {
+			let { data } = await axios.get(
+				`${process.env.REACT_APP_SERVER_BASE_URL}/book`,
+				// 'http://localhost:5000/book'
+				{
+					headers: {
+						token: localStorage.getItem('userToken'),
+					},
+				}
+			);
 
-		setAllBooks(data.books);
-		setLoading(false);
+			setAllBooks(data.books);
+		} catch (error) {
+			if (error.status === 403)
+				navigate('/login');
+		}
+		finally {
+			setLoading(false);
+		}
 	}
 
 	async function searchBooksByName() {
 		setAllBooks([]);
 		setLoading(true);
-		let { data } = await axios.get(
-			`${process.env.REACT_APP_SERVER_BASE_URL}/book/searchBooks/${bookName}`,
-			// `http://localhost:5000/book/searchBooks/${bookName}`,
-			{
-				headers: {
-					token: localStorage.getItem('userToken'),
-				},
-			}
-		);
-		setAllBooks(data.books);
-		setLoading(false)
+		try {
+			let { data } = await axios.get(
+				`${process.env.REACT_APP_SERVER_BASE_URL}/book/searchBooks/${bookName}`,
+				// `http://localhost:5000/book/searchBooks/${bookName}`,
+				{
+					headers: {
+						token: localStorage.getItem('userToken'),
+					},
+				}
+			);
+			setAllBooks(data.books);
+		} catch (error) {
+			if (error.status === 403)
+				navigate('/login');
+		} finally {
+
+			setLoading(false)
+		}
 	}
 
 	function validateSearchData() {
@@ -72,7 +88,7 @@ export default function Home() {
 				<div className='row'>
 					<div className='col-2'>
 						<div className='position-fixed col-lg-2'>
-							<Sidebar page = "Home"/>
+							<Sidebar page="Home" />
 						</div>
 					</div>
 

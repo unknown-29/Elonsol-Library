@@ -29,19 +29,26 @@ export default function Login() {
 
 	async function sendRegisterDataToAPI() {
 		setLoading(true);
-		let { data } = await axios.post(
-			`${process.env.REACT_APP_SERVER_BASE_URL}/user/signin`,
-			user
-		);
-		setLoading(false);
-		console.log(data);
+		try {
+			let { data } = await axios.post(
+				`${process.env.REACT_APP_SERVER_BASE_URL}/user/signin`,
+				user
+			);
+			console.log(data);
 
-		if (data.message === 'success') {
-			localStorage.setItem('userToken', data.token);
-			setError('success');
-			navigate('/home');
-		} else {
-			setError(data.message);
+			if (data.message === 'success') {
+				localStorage.setItem('userToken', data.token);
+				setError('success');
+				navigate('/home');
+			}
+		} catch (error) {
+			// console.log(error.response.data.message);
+
+			setError(error.response.data.message);
+
+		} finally {
+			setLoading(false);
+
 		}
 	}
 
@@ -159,6 +166,7 @@ export default function Login() {
 										</div>
 									</form>
 								</div>
+								{error ? error : ''}
 							</div>
 						</div>
 					</div>
