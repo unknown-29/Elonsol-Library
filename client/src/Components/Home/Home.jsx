@@ -6,7 +6,7 @@ import BookItem from './BookItem';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Joi from 'joi';
-// @todo add pagination
+// @todo add pagination if possible
 export default function Home() {
 	let navigate = useNavigate();
 	const [allBooks, setAllBooks] = useState([]);
@@ -29,7 +29,7 @@ export default function Home() {
 
 			setAllBooks(data.books);
 		} catch (error) {
-			if (error.status === 403)
+			if (error.status === 401)
 				navigate('/login');
 		}
 		finally {
@@ -52,7 +52,7 @@ export default function Home() {
 			);
 			setAllBooks(data.books);
 		} catch (error) {
-			if (error.status === 403)
+			if (error.status === 401)
 				navigate('/login');
 		} finally {
 

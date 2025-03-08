@@ -59,7 +59,7 @@ export default function AddBook() {
 			}
 			setLoading(false)
 		} catch (error) {
-			if (error.status === 403) navigate('/login')
+			if (error.status === 401) navigate('/login')
 			console.log(error);
 		}
 		finally {

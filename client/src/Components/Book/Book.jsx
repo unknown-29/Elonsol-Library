@@ -60,7 +60,7 @@ export default function Book() {
 			setDownloadProgress(0);
 			setIsDownloading(false);
 		} catch (error) {
-			if (error.status === 403) navigate('/login')
+			if (error.status === 401) navigate('/login')
 			console.error('Error downloading the file:');
 			const errorMessage = await error.response.data.text();
 			const errorData = JSON.parse(errorMessage);
@@ -123,7 +123,7 @@ export default function Book() {
 			setBookData(book);
 			console.log(book);
 		} catch (error) {
-			if (error.status === 403) navigate('/login')
+			if (error.status === 401) navigate('/login')
 			else alert('server is busy!')
 		}
 		finally {

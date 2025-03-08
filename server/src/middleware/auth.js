@@ -8,7 +8,7 @@ const userAuth = async (req, res, next) => {
         const token = req.header('token');
         const decoded = jwt.verify(token, process.env.JWT_LOGIN_KEY)
         if (!decoded.userId || !decoded.userEmail) {
-            next(new AppError("Invalid token or it may be expired", 403))
+            next(new AppError("Invalid token or it may be expired", 401))
         }
         else {
             const user = await userModel.findById(decoded.userId)
@@ -18,14 +18,14 @@ const userAuth = async (req, res, next) => {
             }
 
             else {
-                next(new AppError("Please Login first", 403))
+                next(new AppError("Please Login first", 401))
             }
         }
     }
 
 
     catch (error) {
-        next(new AppError(error, 403))
+        next(new AppError(error, 401))
     }
 }
 
