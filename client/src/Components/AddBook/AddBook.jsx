@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { io } from 'socket.io-client';
 import Loading from '../Loading/Loading';
 import { useNavigate } from 'react-router-dom';
+import ProgressBar from 'react-bootstrap/esm/ProgressBar';
 
 export default function AddBook() {
 	const navigate = useNavigate()
@@ -18,6 +19,8 @@ export default function AddBook() {
 	const [description, setDescription] = useState(null);
 	const [loading, setLoading] = useState(false)
 	const [socket, setSocket] = useState(null);
+	const [isUploading, setIsUploading] = useState(false);
+	const [uploadProgress, setUploadProgress] = useState(0);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -42,6 +45,9 @@ export default function AddBook() {
 			console.log(response, "success upploading metadata and cover");
 			const formData2 = new FormData()
 			formData2.append('book', book)
+			setLoading(false)
+			setIsUploading(true);
+			setUploadProgress(0);
 			const response2 = await axios.post(
 				`${process.env.REACT_APP_SERVER_BASE_URL}/book/upload/${response.data.id}`,
 				formData2,
@@ -55,7 +61,6 @@ export default function AddBook() {
 
 			if (response.data?.message === 'success' && response2.data?.message === 'success') {
 				setError(true);
-				document.getElementById('cover').value = '';
 			}
 			setLoading(false)
 		} catch (error) {
@@ -64,6 +69,15 @@ export default function AddBook() {
 		}
 		finally {
 			setLoading(false)
+			setUploadProgress(0);
+			setIsUploading(false);
+			if (document.getElementById('cover')) document.getElementById('cover').value = '';
+			if (document.getElementById('book')) document.getElementById('book').value = '';
+			if (document.getElementById('author')) document.getElementById('author').value = '';
+			if (document.getElementById('name')) document.getElementById('name').value = '';
+			if (document.getElementById('category')) document.getElementById('category').value = '';
+			if (document.getElementById('description')) document.getElementById('description').value = '';
+
 		}
 	};
 
@@ -86,11 +100,16 @@ export default function AddBook() {
 		newSocket.on('connect', () => console.log('socket connected'));
 		newSocket.on('disconnect', () => console.log('socket disconnected'));
 		newSocket.on('uploadProgress', (data) => {
+			if (uploadProgress === 0) {
+				setLoading(false);
+				setIsUploading(true);
+			}
+			setUploadProgress(data.percent)
 			console.log('Received upload progress from server:', data);
 		});
-		newSocket.on('downloadProgress', (data) => {
-			console.log('Received download progress from server:', data);
-		});
+		// newSocket.on('downloadProgress', (data) => {
+		// 	console.log('Received download progress from server:', data);
+		// });
 
 		return () => {
 			anim.destroy();
@@ -98,7 +117,7 @@ export default function AddBook() {
 		};
 	}, [setSocket]);
 
-	return loading ? <Loading /> : (
+	return (
 		<>
 			<div className='overflow-hidden'>
 				<div className='row'>
@@ -153,8 +172,8 @@ export default function AddBook() {
 									onChange={(e) => setDescription(e.target.value)}
 									type='text'
 									className='form-control my-2'
-									id='category'
-									name='category'
+									id='description'
+									name='description'
 									placeholder='Enter Book Description'
 									minLength={'5'}
 								/>
@@ -177,8 +196,10 @@ export default function AddBook() {
 									placeholder='Upload Book'
 									required
 								/>
-								<button className=' btn btn-danger w-100 rounded-2 text-light'>
-									Add Book
+
+								{isUploading && <ProgressBar animated now={uploadProgress} />}
+								<button className=' btn btn-danger w-100 rounded-2 text-light' disabled={(loading || isUploading)}>
+									{(loading || isUploading) ? 'wait...' : 'Add Book'}
 								</button>
 							</form>
 							{error ? (

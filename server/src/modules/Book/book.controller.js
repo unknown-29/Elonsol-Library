@@ -25,11 +25,11 @@ export const downloadBook = catchAsyncError(async (req, res, next) => {
 		const io = req.app.get('socketio');
 		// console.log(req.params.bookId);
 		const storage = await new Storage({
-			email: 'devgmehta1608@gmail.com',
-			password: 'Dgm@29042003',
+			email: 'sehirad634@payposs.com',
+			password: 'sehirad634',
 		}).ready;
 		const { downloadUrl } = await bookModel.findOne({
-			bookId: req.params.bookId,
+			_id: new mongoose.Types.ObjectId(req.params.bookId)
 		});
 		// console.log(downloadUrl);
 		const file = File.fromURL(downloadUrl);
@@ -52,8 +52,8 @@ export const uploadBook = catchAsyncError(async (req, res, next) => {
 	const io = req.app.get('socketio');
 	try {
 		const storage = await new Storage({
-			email: 'devgmehta1608@gmail.com',
-			password: 'Dgm@29042003',
+			email: 'sehirad634@payposs.com',
+			password: 'sehirad634',
 		}).ready;
 		const file = storage.upload(
 			{

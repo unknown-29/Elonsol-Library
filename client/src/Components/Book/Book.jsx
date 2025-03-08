@@ -35,6 +35,7 @@ export default function Book() {
 		// 	});
 		try {
 			setDownloadProgress(0);
+			// setLoading(true)
 			setIsDownloading(true);
 			const response = await axios.get(
 				`${process.env.REACT_APP_SERVER_BASE_URL}/book/download/${allURLParams.id}`,
@@ -57,8 +58,6 @@ export default function Book() {
 			downloadLink.click();
 
 			URL.revokeObjectURL(objectUrl);
-			setDownloadProgress(0);
-			setIsDownloading(false);
 		} catch (error) {
 			if (error.status === 401) navigate('/login')
 			console.error('Error downloading the file:');
@@ -67,6 +66,9 @@ export default function Book() {
 			console.error('Backend Error Message:', errorData.message);
 			console.error('Status:', error.response.status);
 			alert(`Error downloading the file: ${errorData.message}`);
+
+		} finally {
+			// setLoading(false)
 			setDownloadProgress(0);
 			setIsDownloading(false);
 		}
@@ -121,7 +123,7 @@ export default function Book() {
 				}
 			);
 			setBookData(book);
-			console.log(book);
+			// console.log(book);
 		} catch (error) {
 			if (error.status === 401) navigate('/login')
 			else alert('server is busy!')
@@ -142,6 +144,7 @@ export default function Book() {
 			console.log('Received upload progress from server:', data);
 		});
 		newSocket.on('downloadProgress', (data) => {
+			// if (downloadProgress === 0) setLoading(false)
 			setDownloadProgress(data.percent);
 			console.log('Received download progress from server:', data);
 		});
@@ -192,8 +195,9 @@ export default function Book() {
 											variant='primary'
 											onClick={handleDownload}
 											className='btn btn-danger w-100'
+											disabled={isDownloading}
 										>
-											Download this book
+											{isDownloading ? 'downloading...' : 'Download this book'}
 										</button>
 									</div>
 									<div className='mt-2'>
@@ -205,6 +209,7 @@ export default function Book() {
 										)} */}
 										{isDownloading && (
 											<ProgressBar
+												animated
 												variant='success'
 												now={downloadProgress}
 											/>
