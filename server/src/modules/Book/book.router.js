@@ -7,7 +7,7 @@ import * as bookController from './book.controller.js';
 import * as bookValidation from './book.validation.js';
 
 const router = Router();
-router.post('/', userAuth, fileUpload('cover'), bookController.addBook).get('/', userAuth, bookController.getAllBooks)
+router.post('/', userAuth, fileUpload('cover'), bookController.addBook).get('/', userAuth, bookController.getAllBooks).delete('/:bookId', userAuth, bookController.deleteBook)
 router
 	.get('/download/:bookId', userAuth, bookController.downloadBook)
 	.post('/upload/:bookId', userAuth, fileUpload('book'), bookController.uploadBook);

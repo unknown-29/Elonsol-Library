@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import Modal from 'react-bootstrap/Modal';
@@ -7,7 +7,10 @@ import Button from 'react-bootstrap/Button';
 import Loading from '../Loading/Loading';
 import { io } from 'socket.io-client';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import { UserContext } from '../../Context/UserContext';
 export default function Book() {
+	const { getUserData } = useContext(UserContext);
+	const userData = getUserData()
 	const navigate = useNavigate()
 	let allURLParams = useParams();
 	const [bookData, setBookData] = useState({});
@@ -16,6 +19,7 @@ export default function Book() {
 	const [downloadProgress, setDownloadProgress] = useState(0);
 	// const [isUploading, setIsUploading] = useState(false);
 	const [isDownloading, setIsDownloading] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 	const [socket, setSocket] = useState(null);
 	const handleDownload = async () => {
 		// setLoading(true);
@@ -71,6 +75,34 @@ export default function Book() {
 			// setLoading(false)
 			setDownloadProgress(0);
 			setIsDownloading(false);
+		}
+	};
+	const handleDelete = async () => {
+		try {
+			console.log(allURLParams.id)
+			setIsDeleting(true)
+			const response = await axios.delete(
+				`${process.env.REACT_APP_SERVER_BASE_URL}/book/${allURLParams.id}`,
+				{
+					headers: {
+						token: localStorage.getItem('userToken'),
+					},
+				}
+			);
+		} catch (error) {
+			if (error.status === 401) navigate('/login')
+			console.error('Error deleting the file:');
+			// const errorMessage = await error.response.data.text();
+			// const errorData = JSON.parse(errorMessage);
+			// console.error('Backend Error Message:', errorData.message);
+			// console.error('Status:', error.response.status);
+			alert(`Error deleting the file: ${error.response.data.message}`);
+			// console.log(error);
+
+
+		} finally {
+			navigate("/contribution")
+			setIsDeleting(false);
 		}
 	};
 	// const handleUpload = () => {
@@ -199,6 +231,14 @@ export default function Book() {
 										>
 											{isDownloading ? 'downloading...' : 'Download this book'}
 										</button>
+										{userData.userId === bookData.contributedBy && <button
+											variant='primary'
+											onClick={handleDelete}
+											className='btn btn-danger w-100'
+											disabled={isDeleting}
+										>
+											{isDeleting ? 'Deleting...' : 'Delete'}
+										</button>}
 									</div>
 									<div className='mt-2'>
 										{/* {isUploading && (

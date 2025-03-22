@@ -29,8 +29,10 @@ const bookSchema = mongoose.Schema(
 		fileSize: {
 			type: String,
 		},
+		contributedBy: {
+			type: mongoose.Types.ObjectId
+		},
 	},
-
 	{ timestamps: true }
 );
 

@@ -6,28 +6,29 @@ import '../styles/sidebar-styles.css';
 export default function Sidebar(props) {
     useEffect(() => {
         if (props.page === 'Home') {
-            const homeLink = document.getElementsByClassName("Links")[0];
+            const links = document.getElementsByClassName("Links")[0];
 
-            if (homeLink) {
-                homeLink.classList.add("text-warning");
+            if (links) {
+                links.classList.add("text-warning");
             }
         }
 
         else if (props.page === 'Create') {
-            const homeLink = document.getElementsByClassName("Links")[1];
+            const links = document.getElementsByClassName("Links")[1];
 
-            if (homeLink) {
-                homeLink.classList.add("text-warning");
+            if (links) {
+                links.classList.add("text-warning");
             }
         }
 
         else if (props.page == 'Profile') {
-            const homeLink = document.getElementsByClassName("Links")[2];
+            const links = document.getElementsByClassName("Links")[2];
 
-            if (homeLink) {
-                homeLink.classList.add("text-warning");
+            if (links) {
+                links.classList.add("text-warning");
             }
         }
+
     }, [props.page]);
     return (
         <>

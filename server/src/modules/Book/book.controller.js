@@ -64,7 +64,7 @@ export const uploadBook = catchAsyncError(async (req, res, next) => {
 		);
 		file.on('progress', (ob) => {
 			const percent = (ob.bytesUploaded / ob.bytesTotal) * 100;
-			console.log(percent, io.engine.clientsCount);
+			// console.log(percent, io.engine.clientsCount);
 			io.emit('uploadProgress', { percent });
 		});
 		file.on('complete', (data) => {
@@ -98,13 +98,15 @@ export const addBook = catchAsyncError(async (req, res, next) => {
 		try {
 			const result = await cloudinary.uploader.upload(file)
 			const cover = result.url;
-			const { name, category, author, description } = req.body;
+			const { name, category, author, description, contributedBy } = req.body;
+			// console.log(contributedBy)
 			const book = await bookModel.insertMany({
 				name,
 				category,
 				author,
 				cover,
-				description
+				description,
+				contributedBy: new mongoose.Types.ObjectId(contributedBy)
 			});
 			res.status(200).json({ status: 200, message: 'success', id: book[0]._id.toString() })
 		} catch (error) {
@@ -130,7 +132,7 @@ export const getAllBooksByName = catchAsyncError(async (req, res, next) => {
 
 export const getBookById = catchAsyncError(async (req, res, next) => {
 	const { id } = req.params;
-	console.log(id);
+	// console.log(id);
 
 	const book = await bookModel.findById(id);
 	res.status(200).json({ status: 200, message: 'success', book });
@@ -233,4 +235,21 @@ export const searchIssuedBooks = catchAsyncError(async (req, res, next) => {
 	user
 		? res.status(200).json({ status: 200, message: 'success', issuedBooks })
 		: next(new AppError('failed', 400));
+});
+
+export const deleteBook = catchAsyncError(async (req, res, next) => {
+	const { bookId } = req.params;
+	let _id = req.userId;
+	const storage = await new Storage({
+		email: 'sehirad634@payposs.com',
+		password: 'sehirad634',
+	}).ready;
+
+	await bookModel.deleteOne({ _id: new mongoose.Types.ObjectId(bookId) });
+
+
+	const file = storage.find(`${bookId}.pdf`)
+	if (!file) { next(new AppError('File not found!', 404)); return; }
+	await file.delete(true)
+	res.status(200).json({ status: 200, message: 'success' })
 });

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
+import { UserContext } from '../../Context/UserContext';
 import Sidebar from '../Sidebar/Sidebar';
 import Lottie from 'lottie-web';
 import { motion } from 'framer-motion';
@@ -9,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import ProgressBar from 'react-bootstrap/esm/ProgressBar';
 
 export default function AddBook() {
+	const { getUserData } = useContext(UserContext);
 	const navigate = useNavigate()
 	const [name, setName] = useState('');
 	const [category, setCategory] = useState(null);
@@ -24,12 +26,12 @@ export default function AddBook() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
 		const formData = new FormData();
 		formData.append('name', name);
 		formData.append('category', category);
 		formData.append('author', author);
 		formData.append('description', description);
+		formData.append("contributedBy", getUserData()?.userId)
 		formData.append('cover', cover);
 		try {
 			setLoading(true)
@@ -84,6 +86,8 @@ export default function AddBook() {
 	const imgContainer = useRef(null);
 
 	useEffect(() => {
+		console.log(getUserData())
+
 		const container = imgContainer.current;
 		if (!container) return;
 

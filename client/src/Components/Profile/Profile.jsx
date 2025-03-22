@@ -22,15 +22,15 @@ export default function Profile() {
 
             <div className="row align-items-center min-vh-100 ">
               <div className="col-lg-6 px-5">
-                <Link className='text-decoration-none text-black' to={`/nonReturnedBooks`}>
+                <Link className='text-decoration-none text-black' to={`/contribution`}>
                   <motion.div initial={{ scale: 0 }} animate={{ backgroundColor: '#ccd3ea', scale: 1 }}
                     transition={{ duration: 0.3 }} className=' book-item rounded shadow-sm mouse-pointer '>
                     <img className='profile-img-upload mx-auto d-block' src={issuedImg} alt="" />
-                    <p className='text-center pb-5 fs-3 fw-bold'>Non Returned Books</p>
+                    <p className='text-center pb-5 fs-3 fw-bold'>My Contribution</p>
                   </motion.div>
                 </Link>
               </div>
-              <div className="col-lg-6 px-5">
+              {/* <div className="col-lg-6 px-5">
                 <Link className='text-decoration-none text-black' to={`/issuedBooks`}>
                   <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
                     transition={{ delay: 0.3, duration: 0.3 }} className='bg-custom-blue book-item rounded shadow-sm mouse-pointer '>
@@ -39,7 +39,7 @@ export default function Profile() {
 
                   </motion.div>
                 </Link>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

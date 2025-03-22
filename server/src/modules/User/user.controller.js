@@ -7,6 +7,8 @@ import { verificationHTML } from '../../emails/templetes/userEmailVerificationHT
 import jwt from 'jsonwebtoken';
 import { resetPasswordHTML } from '../../emails/templetes/userForgetPasswordHTML.js';
 import { AppError } from '../../utils/AppError.js';
+import bookModel from '../../../database/models/bookModel.js';
+import mongoose from 'mongoose';
 
 export const signUp = catchAsyncError(async (req, res, next) => {
 	const { name, email, password, phone } = req.body;
@@ -174,3 +176,18 @@ export const logout = catchAsyncError(async (req, res, next) => {
 		? res.status(200).json({ status: 200, message: 'success' })
 		: next(new AppError('failed', 400));
 });
+
+export const getBooksByUserId = catchAsyncError(async (req, res, next) => {
+	// console.log(req.params["userId"])
+	// console.log(bookModel);
+
+	const books = await bookModel.find({ contributedBy: new mongoose.Types.ObjectId(req.params["userId"]) }).sort({ createdAt: -1 });
+	// console.log(books)
+	res.status(200).json({ status: 200, message: 'success', books });
+	// const _id = req.userId;
+	// const user = await userModel.findByIdAndUpdate({ _id }, { isActive: false });
+	// user
+	// 	? res.status(200).json({ status: 200, message: 'success' })
+	// 	: next(new AppError('failed', 400));
+	// req.redirect()
+})

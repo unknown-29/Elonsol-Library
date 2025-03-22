@@ -1,19 +1,22 @@
 import jwtDecode from "jwt-decode";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
-export let UserContext = createContext('')
+export let UserContext = createContext('');
 
-export default function UserContextProvider(props)
-{
-    
-    const[userData,setUserData] = useState(null);
-    
-    function decodeUserToken(){
-        let encodedToken = localStorage.getItem('userToken');
-        let decodedToken = jwtDecode(encodedToken);
-        setUserData(decodedToken); 
-      }
+export default function UserContextProvider(props) {
 
-
-    return <UserContext.Provider value={{userData,setUserData,decodeUserToken}}>{props.children}</UserContext.Provider>
+  function getUserData() {
+    try {
+      const encodedToken = localStorage.getItem('userToken');
+      const userData = jwtDecode(encodedToken);
+      return userData;
+    } catch (error) {
+      return ""
+    }
+  }
+  return (
+    <UserContext.Provider value={{ getUserData }}>
+      {props.children}
+    </UserContext.Provider >
+  );
 }

@@ -9,6 +9,7 @@ import NonReturnedBooks from './Components/NonReturnedBooks/NonReturnedBooks';
 import Profile from './Components/Profile/Profile';
 import RootLayout from './Components/RootLayout/RootLayout';
 import SignUp from './Components/SignUp/SignUp';
+import Contribution from './Components/Contribution/Contribution';
 import UserContextProvider from './Context/UserContext';
 
 let routers = createBrowserRouter([
@@ -22,6 +23,7 @@ let routers = createBrowserRouter([
 			{ path: 'addBook', element: <AddBook /> },
 			{ path: 'book/:id', element: <Book /> },
 			{ path: 'profile', element: <Profile /> },
+			{ path: 'contribution', element: <Contribution /> },
 			{ path: 'nonReturnedBooks', element: <NonReturnedBooks /> },
 			{ path: 'issuedBooks', element: <IssuedBooks /> },
 		],
