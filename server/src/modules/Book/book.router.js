@@ -25,7 +25,7 @@ router.post(
 	bookController.returnBook
 );
 router.get('/issue', userAuth, bookController.getIssuedBooks);
-router.get('/searchBooks/:letters', userAuth, bookController.getAllBooksByName);
+router.get('/searchBooks/:letters', userAuth, bookController.searchBooksByName);
 
 router.get(
 	'/search/:bookName',

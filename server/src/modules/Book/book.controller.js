@@ -49,6 +49,9 @@ export const downloadBook = catchAsyncError(async (req, res, next) => {
 export const uploadBook = catchAsyncError(async (req, res, next) => {
 	// console.log('uploadBook', req.file, req.params);
 	// console.log('called ', req.params.bookId);
+	const deleteBook = async function (req, res, next) {
+		const book = await bookModel.deleteOne({ _id: new mongoose.Types.ObjectId(req.params.bookId) });
+	}
 	const io = req.app.get('socketio');
 	try {
 		const storage = await new Storage({
@@ -75,14 +78,20 @@ export const uploadBook = catchAsyncError(async (req, res, next) => {
 					});
 					res.status(200).json({ status: 200, message: 'success' })
 				} catch (error) {
+					deleteBook()
 					console.error(error);
 					next(new AppError('failed to upload book', 500));
 				}
+			}).catch(() => {
+				deleteBook()
+				next(new AppError('failed to upload book', 500));
 			});
 		});
 	} catch (err) {
+		deleteBook()
 		console.error(err);
 	}
+
 });
 
 export const addBook = catchAsyncError(async (req, res, next) => {
@@ -121,7 +130,7 @@ export const getAllBooks = catchAsyncError(async (req, res, next) => {
 	res.status(200).json({ status: 200, message: 'success', books });
 });
 
-export const getAllBooksByName = catchAsyncError(async (req, res, next) => {
+export const searchBooksByName = catchAsyncError(async (req, res, next) => {
 	let { letters } = req.params;
 	const books = await bookModel
 		.find({ name: { $regex: letters, $options: 'i' } })

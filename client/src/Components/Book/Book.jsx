@@ -190,7 +190,7 @@ export default function Book() {
 				<div className='row'>
 					<div className='col-2'>
 						<div className='position-fixed col-lg-2'>
-							<Sidebar />
+							<Sidebar page={userData.userId === bookData.contributedBy ? "Profile" : "Home"} />
 						</div>
 					</div>
 

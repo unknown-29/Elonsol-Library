@@ -9,6 +9,7 @@ import { UserContext } from '../../Context/UserContext';
 // @todo add pagination if possible
 export default function Contribution() {
   const { getUserData } = useContext(UserContext);
+  const userData = getUserData()
   let navigate = useNavigate();
   const [allBooks, setAllBooks] = useState([]);
   const [bookName, setBookName] = useState('');
@@ -45,7 +46,7 @@ export default function Contribution() {
     setLoading(true);
     try {
       let { data } = await axios.get(
-        `${process.env.REACT_APP_SERVER_BASE_URL}/book/searchBooks/${bookName}`,
+        `${process.env.REACT_APP_SERVER_BASE_URL}/user/${userData.id}/searchBooks/${bookName}`,
         // `http://localhost:5000/book/searchBooks/${bookName}`,
         {
           headers: {

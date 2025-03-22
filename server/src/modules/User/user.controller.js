@@ -191,3 +191,10 @@ export const getBooksByUserId = catchAsyncError(async (req, res, next) => {
 	// 	: next(new AppError('failed', 400));
 	// req.redirect()
 })
+
+export const searchUserBooksByName = catchAsyncError(async (req, res, next) => {
+	const books = await bookModel.find({ contributedBy: req.params.userId, name: { $regex: req.params.bookName, $options: 'i' } })
+		.sort({ createdAt: -1 })
+		.exec();
+	res.status(200).json({ status: 200, message: 'success', books });
+});
