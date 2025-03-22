@@ -38,7 +38,7 @@ export default function Home() {
 	}
 
 	async function searchBooksByName() {
-		setAllBooks([]);
+		// setAllBooks([]);
 		setLoading(true);
 		try {
 			let { data } = await axios.get(
@@ -60,23 +60,12 @@ export default function Home() {
 		}
 	}
 
-	function validateSearchData() {
-		let schema = Joi.object({
-			name: Joi.string().required(),
-		});
-
-		return schema.validate({ name: bookName }, { abortEarly: false });
-	}
-
 	function validateAndSearch(e) {
-		//setLoading(true);
 		e.preventDefault();
-		let validation = validateSearchData();
-		if (validation.error) {
-			console.log(validation.error);
-		} else {
+
+		if (bookName !== '')
 			searchBooksByName();
-		}
+		else getDataFromURL()
 	}
 
 	useEffect(() => {
