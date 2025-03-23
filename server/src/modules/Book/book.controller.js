@@ -125,6 +125,72 @@ export const addBook = catchAsyncError(async (req, res, next) => {
 	}
 });
 
+export const updateBookFile = catchAsyncError(async (req, res, next) => {
+	const storage = await new Storage({
+		email: 'sehirad634@payposs.com',
+		password: 'sehirad634',
+	}).ready;
+	const { bookId } = req.params
+	const file = storage.find(`${bookId}.pdf`)
+	// if (!file) { next(new AppError('File not found!', 404)); return; }
+	if (file) await file.delete(true)
+	return res.redirect(307, `/book/upload/${bookId}`);
+})
+
+export const updateBook = catchAsyncError(async (req, res, next) => {
+
+	if (req.file) {
+		const book = await bookModel.findOne({ _id: new mongoose.Types.ObjectId(req.params.bookId) })
+		cloudinary.config({
+			cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+			api_key: process.env.CLOUDINARY_API_KEY,
+			api_secret: process.env.CLOUDINARY_API_SECRET,
+		});
+		cloudinary.uploader
+			.destroy(book.cover.split('/').splice(-1)[0].split('.')[0])
+			.then(async _ => {
+				const dUri = new Datauri();
+				const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+				if (req.file) {
+					const file = dataUri(req).content;
+					try {
+						const result = await cloudinary.uploader.upload(file)
+						const cover = result.url;
+						await bookModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(req.params.bookId) }, { ...req.body, cover })
+						res.status(200).json({ status: 200, message: 'success', id: book._id.toString() })
+
+					} catch (err) {
+						console.error(err)
+						next(new AppError('failed to update book', 500));
+
+					}
+				}
+			})
+	} else {
+		const book = await bookModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(req.params.bookId) }, { ...req.body })
+		res.status(200).json({ status: 200, message: 'success', id: book._id.toString() })
+
+	}
+	// console.log("success")
+
+	// 		const { name, category, author, description, contributedBy } = req.body;
+	// 		// console.log(contributedBy)
+	// 		const book = await bookModel.insertMany({
+	// 			name,
+	// 			category,
+	// 			author,
+	// 			cover,
+	// 			description,
+	// 			contributedBy: new mongoose.Types.ObjectId(contributedBy)
+	// 		});
+	// 		res.status(200).json({ status: 200, message: 'success', id: book[0]._id.toString() })
+	// 	} catch (error) {
+	// 		console.error(error)
+	// 		next(new AppError('failed to add book', 500));
+	// 	}
+	// }
+});
+
 export const getAllBooks = catchAsyncError(async (req, res, next) => {
 	const books = await bookModel.find().sort({ createdAt: -1 });
 	res.status(200).json({ status: 200, message: 'success', books });
@@ -253,8 +319,11 @@ export const deleteBook = catchAsyncError(async (req, res, next) => {
 		email: 'sehirad634@payposs.com',
 		password: 'sehirad634',
 	}).ready;
-
+	const book = await bookModel.findOne({ _id: new mongoose.Types.ObjectId(bookId) })
 	await bookModel.deleteOne({ _id: new mongoose.Types.ObjectId(bookId) });
+
+	await cloudinary.uploader
+		.destroy(book.cover.split('/').splice(-1)[0].split('.')[0])
 
 
 	const file = storage.find(`${bookId}.pdf`)

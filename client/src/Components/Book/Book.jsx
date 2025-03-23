@@ -165,6 +165,14 @@ export default function Book() {
 		}
 	}
 
+	const handleEdit = () => {
+		navigate('/addBook', {
+			state: {
+				bookData
+			}
+		})
+	}
+
 	useEffect(() => {
 		getBookData();
 		const newSocket = io(process.env.REACT_APP_SERVER_BASE_URL);
@@ -238,6 +246,14 @@ export default function Book() {
 											disabled={isDeleting}
 										>
 											{isDeleting ? 'Deleting...' : 'Delete'}
+										</button>}
+										{userData.userId === bookData.contributedBy && <button
+											variant='primary'
+											onClick={handleEdit}
+											className='btn btn-danger w-100'
+											disabled={isDeleting}
+										>
+											{'Edit'}
 										</button>}
 									</div>
 									<div className='mt-2'>
