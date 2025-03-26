@@ -5,14 +5,21 @@ import Sidebar from '../Sidebar/Sidebar';
 import BookItem from './BookItem';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import SplitButton from 'react-bootstrap/SplitButton';
 import Joi from 'joi';
 // @todo add pagination if possible
 export default function Home() {
 	let navigate = useNavigate();
 	const [allBooks, setAllBooks] = useState([]);
-	const [bookName, setBookName] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [err, setErr] = useState(null);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [searchType, setSearchType] = useState('name')
+	const handleSearchTypeChange = (type) => setSearchType(type)
+	const handleSearchQueryChange = (e) => setSearchQuery(e.target.value);
 
 	async function getDataFromURL() {
 		setLoading(true);
@@ -37,12 +44,13 @@ export default function Home() {
 		}
 	}
 
-	async function searchBooksByName() {
+	async function searchBook() {
 		// setAllBooks([]);
+
 		setLoading(true);
 		try {
 			let { data } = await axios.get(
-				`${process.env.REACT_APP_SERVER_BASE_URL}/book/searchBooks/${bookName}`,
+				`${process.env.REACT_APP_SERVER_BASE_URL}/book/searchBooks/${searchType}/${searchQuery}`,
 				// `http://localhost:5000/book/searchBooks/${bookName}`,
 				{
 					headers: {
@@ -55,25 +63,24 @@ export default function Home() {
 			if (error.status === 401)
 				navigate('/login');
 		} finally {
-
 			setLoading(false)
 		}
 	}
 
-	function validateAndSearch(e) {
-		e.preventDefault();
+	// function validateAndSearch(e) {
+	// 	e.preventDefault();
 
-		if (bookName !== '')
-			searchBooksByName();
-		else getDataFromURL()
-	}
+	// 	if (searchQuery !== '')
+	// 		searchBook();
+	// 	else getDataFromURL()
+	// }
 
 	useEffect(() => {
 		getDataFromURL();
 	}, []);
 	return (
 		<>
-			<div className='overflow-hidden'>
+			<div className='overflow-visible'>
 				<div className='row'>
 					<div className='col-2'>
 						<div className='position-fixed col-lg-2'>
@@ -82,7 +89,30 @@ export default function Home() {
 					</div>
 
 					<div className='col-10 px-lg-5 px-2 my-3'>
-						<motion.span
+						<InputGroup >
+							<Form.Control
+								aria-label="Search input"
+								placeholder={`Search by ${searchType[0].toUpperCase() + searchType.slice(1)}`}
+								value={searchQuery}
+								onChange={handleSearchQueryChange}
+							/>
+							<SplitButton
+								variant="outline-secondary"
+								title={`Search By ${searchType[0].toUpperCase() + searchType.slice(1)}`}
+								id="segmented-button-dropdown-2"
+								onClick={searchBook}
+								alignRight
+							>
+								<Dropdown.Item onClick={() => handleSearchTypeChange('name')}>Search By Name</Dropdown.Item>
+								<Dropdown.Item onClick={() => handleSearchTypeChange('author')}>Search By Author</Dropdown.Item>
+								<Dropdown.Item onClick={() => handleSearchTypeChange('category')}>Search By Category</Dropdown.Item>
+								<Dropdown.Item onClick={() => handleSearchTypeChange('description')}>Search By Description</Dropdown.Item>
+								<Dropdown.Divider />
+								<Dropdown.Item disabled>Search</Dropdown.Item>
+							</SplitButton>
+						</InputGroup>
+
+						{/* <motion.span
 							initial={{ y: -150 }}
 							animate={{ y: 0 }}
 							transition={{ delay: 0.8, duration: 1 }}
@@ -127,7 +157,7 @@ export default function Home() {
 							>
 								search
 							</button>
-						</motion.span>
+						</motion.span> */}
 						<div className='row'>
 							{allBooks.length !== 0 ? (
 								allBooks.map((book, index) => (
@@ -143,7 +173,7 @@ export default function Home() {
 							) : loading === true ? (
 								<Loading />
 							) : (
-								<div className='text-center fs-4 fw-bold'>No Books Found</div>
+								<div className='text-center mt-3 fs-4 fw-bold'>No Books Found</div>
 							)}
 						</div>
 					</div>

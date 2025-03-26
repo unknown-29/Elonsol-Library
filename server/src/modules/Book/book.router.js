@@ -33,7 +33,7 @@ router.post(
 
 router.get('/issue', userAuth, bookController.getIssuedBooks);
 
-router.get('/searchBooks/:letters', userAuth, bookController.searchBooksByName);
+router.get('/searchBooks/:searchType/:searchQuery?', userAuth, bookController.searchBooks);
 
 router.get(
 	'/search/:bookName',

@@ -196,12 +196,19 @@ export const getAllBooks = catchAsyncError(async (req, res, next) => {
 	res.status(200).json({ status: 200, message: 'success', books });
 });
 
-export const searchBooksByName = catchAsyncError(async (req, res, next) => {
-	let { letters } = req.params;
+export const searchBooks = catchAsyncError(async (req, res, next) => {
+	let searchQuery = null
+	if (req.params.searchQuery) {
+		searchQuery = req.params.searchQuery
+	}
+	let { searchType } = req.params;
+	const query = {};
+	query[searchType] = { $regex: searchQuery ?? /./, $options: 'i' };
 	const books = await bookModel
-		.find({ name: { $regex: letters, $options: 'i' } })
-		.sort({ createdAt: -1 })
-		.exec();
+		.find(query)
+		.sort({ createdAt: -1 });
+	console.log(books);
+
 	res.status(200).json({ status: 200, message: 'success', books });
 });
 

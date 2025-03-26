@@ -21,7 +21,7 @@ router.patch('/reset_password', verifyResetPasswordToken, validation(userValidat
 router.put('/changePassword', userAuth, validation(userValidation.changePasswordSchema), userController.changePassword)
 router.patch('/logout', userAuth, userController.logout)
 router.get('/:userId/book', userController.getBooksByUserId)
-router.get('/:userId/searchBooks/:bookName', userAuth, userController.searchUserBooksByName)
+router.get('/:userId/searchBooks/:searchType/:searchQuery?', userAuth, userController.searchUserBooks)
 
 
 export default router;
