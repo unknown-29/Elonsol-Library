@@ -54,8 +54,8 @@ export default function AddBook() {
 					setLoading(false)
 				}
 				const formData2 = new FormData()
-				if (book) formData2.append('book', book)
-				{
+				if (book) {
+					formData2.append('book', book)
 					setIsUploading(true);
 					setUploadProgress(0);
 					const response2 = await axios.put(
