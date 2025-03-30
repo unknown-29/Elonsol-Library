@@ -49,7 +49,9 @@ export const downloadBook = catchAsyncError(async (req, res, next) => {
 export const uploadBook = catchAsyncError(async (req, res, next) => {
 	// console.log('uploadBook', req.file, req.params);
 	// console.log('called ', req.params.bookId);
-	const deleteBook = async function (req, res, next) {
+	console.log(req.params);
+
+	const deleteBook = async function () {
 		const book = await bookModel.deleteOne({ _id: new mongoose.Types.ObjectId(req.params.bookId) });
 	}
 	const io = req.app.get('socketio');
@@ -328,6 +330,12 @@ export const deleteBook = catchAsyncError(async (req, res, next) => {
 	}).ready;
 	const book = await bookModel.findOne({ _id: new mongoose.Types.ObjectId(bookId) })
 	await bookModel.deleteOne({ _id: new mongoose.Types.ObjectId(bookId) });
+
+	cloudinary.config({
+		cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+		api_key: process.env.CLOUDINARY_API_KEY,
+		api_secret: process.env.CLOUDINARY_API_SECRET,
+	});
 
 	await cloudinary.uploader
 		.destroy(book.cover.split('/').splice(-1)[0].split('.')[0])

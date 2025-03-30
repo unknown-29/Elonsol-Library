@@ -243,7 +243,7 @@ export default function Book() {
 											variant='primary'
 											onClick={handleDelete}
 											className='btn btn-danger w-100'
-											disabled={isDeleting}
+											disabled={isDeleting || isDownloading}
 										>
 											{isDeleting ? 'Deleting...' : 'Delete'}
 										</button>}
@@ -251,7 +251,7 @@ export default function Book() {
 											variant='primary'
 											onClick={handleEdit}
 											className='btn btn-danger w-100'
-											disabled={isDeleting}
+											disabled={isDeleting || isDownloading}
 										>
 											{'Edit'}
 										</button>}

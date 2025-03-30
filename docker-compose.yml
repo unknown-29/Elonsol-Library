@@ -1,0 +1,25 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./client # Path to your React app directory
+    ports:
+      - '3001:3001' # Expose the React app on port 3000
+    networks:
+      - app-network
+    depends_on:
+      - backend # Ensure backend starts before frontend
+
+  backend:
+    build:
+      context: ./server # Path to your Node.js app directory
+    ports:
+      - '3000:3000' # Expose the Node.js server on port 3000
+    networks:
+      - app-network
+    environment:
+      - NODE_ENV=production
+
+networks:
+  app-network:
+    driver: bridge
