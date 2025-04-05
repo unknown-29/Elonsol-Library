@@ -125,7 +125,7 @@ export default function Login() {
 										{errList.filter(
 											(err) => err.context.label === 'email'
 										)[0] ? (
-											<div className='text-danger text-start pb-1 fs-small'>
+											<div className='text-warning text-start pb-1 fs-small'>
 												{
 													errList.filter(
 														(err) => err.context.label === 'email'
@@ -149,7 +149,7 @@ export default function Login() {
 												}
 											</div>
 										) : null}
-										<button className='btn btn-danger text-light w-100 rounded-2 mt-2'>
+										<button className='btn btn-warning text-light w-100 rounded-2 mt-2'>
 											{' '}
 											Login
 										</button>

@@ -267,7 +267,7 @@ export default function Book() {
 										<button
 											variant='primary'
 											onClick={handleDownload}
-											className='btn btn-danger w-100'
+											className='btn btn-warning w-100'
 											disabled={isDownloading || isDeleting}
 										>
 											{isDownloading ? 'downloading...' : 'Download this book'}
@@ -275,7 +275,7 @@ export default function Book() {
 										{userData.userId === bookData.contributedBy && <button
 											variant='primary'
 											onClick={handleDelete}
-											className='btn btn-danger w-100'
+											className='btn btn-warning w-100'
 											disabled={isDeleting || isDownloading}
 										>
 											{isDeleting ? 'Deleting...' : 'Delete'}
@@ -283,7 +283,7 @@ export default function Book() {
 										{userData.userId === bookData.contributedBy && <button
 											variant='primary'
 											onClick={handleEdit}
-											className='btn btn-danger w-100'
+											className='btn btn-warning w-100'
 											disabled={isDeleting || isDownloading}
 										>
 											{'Edit'}
@@ -298,8 +298,7 @@ export default function Book() {
 										)} */}
 										{isDownloading && (
 											<ProgressBar
-												animated
-												variant='success'
+												variant='warning'
 												now={downloadProgress}
 											/>
 										)}

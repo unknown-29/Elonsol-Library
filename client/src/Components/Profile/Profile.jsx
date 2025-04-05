@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import Sidebar from '../Sidebar/Sidebar'
-import issuedImg from '../../images/issued.png'
+import issuedImg from '../../images/newIssued.png'
 import issuedImg1 from '../../images/issue1.png'
 import { UserContext } from '../../Context/UserContext'
 import { Link } from 'react-router-dom'
@@ -20,13 +20,18 @@ export default function Profile() {
 
           <div className="col-10 px-lg-5 px-2 ">
 
-            <div className="row align-items-center min-vh-100 ">
+            <div className="row align-items-center min-vh-100 justify-content-center align-items-center">
               <div className="col-lg-6 px-5">
                 <Link className='text-decoration-none text-black' to={`/contribution`}>
-                  <motion.div initial={{ scale: 0 }} animate={{ backgroundColor: '#ccd3ea', scale: 1 }}
-                    transition={{ duration: 0.3 }} className=' book-item rounded shadow-sm mouse-pointer '>
-                    <img className='profile-img-upload mx-auto d-block' src={issuedImg} alt="" />
-                    <p className='text-center pb-5 fs-3 fw-bold'>My Contribution</p>
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ backgroundColor: 'white', scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ minHeight: "300px" }}
+                    className='book-item rounded shadow-sm mouse-pointer d-flex flex-column align-items-center justify-content-center'
+                  >
+                    <img className='profile-img-upload mb-3' src={issuedImg} alt="" />
+                    <p className='text-center fs-3 fw-bold'>My Contribution</p>
                   </motion.div>
                 </Link>
               </div>

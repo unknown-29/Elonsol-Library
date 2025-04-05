@@ -97,7 +97,7 @@ export default function Home() {
 								onChange={handleSearchQueryChange}
 							/>
 							<SplitButton
-								variant="outline-secondary"
+								variant="outline-warning"
 								title={`Search By ${searchType[0].toUpperCase() + searchType.slice(1)}`}
 								id="segmented-button-dropdown-2"
 								onClick={searchBook}

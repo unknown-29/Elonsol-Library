@@ -317,10 +317,10 @@ export default function AddBook() {
 									required={!(state && state.bookData)}
 								/>
 
-								{isUploading && <ProgressBar animated now={uploadProgress} />}
-								<button className='btn btn-danger w-100 rounded-2 text-light' disabled={(loading || isUploading)}>
+								<button className='btn btn-warning w-100 rounded-2 text-light' disabled={(loading || isUploading)}>
 									{(loading || isUploading) ? 'wait...' : state && state.bookData ? 'Update' : 'Add Book'}
 								</button>
+								{isUploading && <ProgressBar style={{ marginTop: '10px' }} variant='warning' now={uploadProgress} />}
 							</form>
 							{error ? (
 								<div className='my-3 alert alert-success'>

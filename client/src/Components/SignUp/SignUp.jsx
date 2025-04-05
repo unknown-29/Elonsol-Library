@@ -181,7 +181,7 @@ export default function SignUp() {
 												{'Invalid phone number'}
 											</div>
 										) : null}
-										<button className='btn btn-danger text-light w-100 rounded-2 mt-2'>
+										<button className='btn btn-warning text-light w-100 rounded-2 mt-2'>
 											{' '}
 											Sign Up
 										</button>
