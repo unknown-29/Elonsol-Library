@@ -268,7 +268,7 @@ export default function Book() {
 											variant='primary'
 											onClick={handleDownload}
 											className='btn btn-danger w-100'
-											disabled={isDownloading}
+											disabled={isDownloading || isDeleting}
 										>
 											{isDownloading ? 'downloading...' : 'Download this book'}
 										</button>

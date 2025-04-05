@@ -88,7 +88,7 @@ export default function SignUp() {
 			renderer: 'svg',
 			loop: true,
 			autoplay: true,
-			animationData: require('./../../images/book1.json'),
+			animationData: require('./../../images/signup.json'),
 		});
 
 		return () => {

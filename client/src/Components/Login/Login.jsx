@@ -86,7 +86,7 @@ export default function Login() {
 			renderer: 'svg',
 			loop: true,
 			autoplay: true,
-			animationData: require('./../../images/book.json'),
+			animationData: require('./../../images/login.json'),
 		});
 
 		return () => {
