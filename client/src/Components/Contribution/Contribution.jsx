@@ -86,7 +86,7 @@ export default function Contribution() {
 
   return (
     <>
-      <div className='overflow-visible'>
+      <div className='overflow-visible overflow-x-hidden'>
         <div className='row'>
           <div className='col-2'>
             <div className='position-fixed col-lg-2'>

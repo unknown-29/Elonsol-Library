@@ -28,6 +28,13 @@ export default function Sidebar(props) {
                 links.classList.add("text-warning");
             }
         }
+        else if (props.page == 'Favorites') {
+            const links = document.getElementsByClassName("Links")[3];
+
+            if (links) {
+                links.classList.add("text-warning");
+            }
+        }
 
     }, [props.page]);
     return (
@@ -50,6 +57,11 @@ export default function Sidebar(props) {
 
                         <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
                             <Link to="/profile" className="nav-link px-0 px-lg-2"> <i className="bi bi-person-circle"></i><span className="px-lg-2 ms-1 d-none d-lg-inline">Profile</span> </Link>
+                        </li>
+
+                        <li className="p-3 pe-lg-5 sidebar-element hover-text-warning Links">
+                            <Link to="/favorites" className="nav-link px-0 px-lg-2"> <i className="bi bi-heart-fill"></i>
+                                <span className="px-lg-2 ms-1 d-none d-lg-inline">Favorites</span> </Link>
                         </li>
 
                         <li className="p-3 pe-lg-5 sidebar-element hover-text-warning">

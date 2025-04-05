@@ -16,7 +16,7 @@ export default function Login() {
 
 	const [errList, setErrList] = useState([]);
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState('success');
+	const [error, setError] = useState('');
 
 	let navigate = useNavigate();
 

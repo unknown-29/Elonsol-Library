@@ -11,6 +11,7 @@ import RootLayout from './Components/RootLayout/RootLayout';
 import SignUp from './Components/SignUp/SignUp';
 import Contribution from './Components/Contribution/Contribution';
 import UserContextProvider from './Context/UserContext';
+import Favorites from './Components/Favorites/Favorites';
 
 let routers = createBrowserRouter([
 	{
@@ -24,6 +25,7 @@ let routers = createBrowserRouter([
 			{ path: 'book/:id', element: <Book /> },
 			{ path: 'profile', element: <Profile /> },
 			{ path: 'contribution', element: <Contribution /> },
+			{ path: 'favorites', element: <Favorites /> },
 			{ path: 'nonReturnedBooks', element: <NonReturnedBooks /> },
 			{ path: 'issuedBooks', element: <IssuedBooks /> },
 		],

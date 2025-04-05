@@ -80,7 +80,7 @@ export default function Home() {
 	}, []);
 	return (
 		<>
-			<div className='overflow-visible'>
+			<div className='overflow-visible overflow-x-hidden'>
 				<div className='row'>
 					<div className='col-2'>
 						<div className='position-fixed col-lg-2'>
@@ -89,7 +89,7 @@ export default function Home() {
 					</div>
 
 					<div className='col-10 px-lg-5 px-2 my-3'>
-						<InputGroup >
+						<InputGroup>
 							<Form.Control
 								aria-label="Search input"
 								placeholder={`Search by ${searchType[0].toUpperCase() + searchType.slice(1)}`}

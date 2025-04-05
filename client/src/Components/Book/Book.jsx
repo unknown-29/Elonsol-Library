@@ -21,6 +21,26 @@ export default function Book() {
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [socket, setSocket] = useState(null);
+	const [isFavorite, setIsFavorite] = useState(false);
+
+	const handleFavoriteToggle = () => {
+		if (userData.userId === bookData.contributedBy) return;
+
+		let favorites = JSON.parse(localStorage.getItem('favoriteBooks')) || [];
+
+		if (isFavorite) {
+			favorites = favorites.filter(book => book._id !== bookData._id);
+		} else {
+			const alreadyExists = favorites.some(book => book._id === bookData._id);
+			if (!alreadyExists) {
+				favorites.push(bookData);
+			}
+		}
+
+		localStorage.setItem('favoriteBooks', JSON.stringify(favorites));
+		setIsFavorite(!isFavorite);
+	};
+
 	const handleDownload = async () => {
 		// setLoading(true);
 		// axios
@@ -175,6 +195,11 @@ export default function Book() {
 
 	useEffect(() => {
 		getBookData();
+		const favorites = JSON.parse(localStorage.getItem('favoriteBooks')) || [];
+		const isInFavorites = favorites.some(book => book._id === allURLParams.id);
+		setIsFavorite(isInFavorites);
+
+
 		const newSocket = io(process.env.REACT_APP_SERVER_BASE_URL);
 		setSocket(newSocket);
 		newSocket.on('connect', () => console.log('socket connected'));
@@ -214,6 +239,14 @@ export default function Book() {
 									<h4 className='text-center p-3 pb-0 fw-bolder'>
 										{bookData.name}
 									</h4>
+									{
+										userData.userId !== bookData.contributedBy && <button
+											className='btn btn-warning w-100'
+											onClick={handleFavoriteToggle}
+										>
+											{isFavorite ? 'Unfavorite' : 'Add to Favorite'}
+										</button>
+									}
 								</div>
 							</div>
 							<div className='col-lg-8 my-1'>
